@@ -1,3 +1,6 @@
+import { v4 as uuidv4 } from "uuid";
+import Mediator from "@/core/transport.js";
+
 function hashString(str) {
     var hash = 0, i, chr;
 
@@ -23,6 +26,42 @@ function hashImage(imageNode) {
     }
 
     return hashString(JSON.stringify(meta));
+}
+
+function getImageCanvas(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    return canvas;
+}
+
+function uploadFormulationImage(img) {
+    const title = uuidv4();
+
+    getImageCanvas(img).toBlob(blob => {
+        Mediator.publish("upload-solution", {
+            title: title,
+            file: new File([blob], title, {
+                type: "image/png"
+            }),
+        });
+    }, "image/png");
+
+    return title;
+}
+
+function uploadFormulationImages(images) {
+    const titles = [];
+
+    for (const img of images) {
+        titles.push(uploadFormulationImage(img));
+    }
+
+    return titles;
 }
 
 function packImages(nodeList) {
@@ -179,7 +218,12 @@ function getState(classList) {
     return -1;
 }
 
+function createMagicButton() {
+    const btn = document.createElement("span");
+    btn.className = "ss-btn icon fa fa-magic fa-fw";
 
+    return btn;
+}
 
 function findMagicButton(node) {
     return node.querySelector("span .ss-btn .icon");
@@ -222,9 +266,14 @@ function verifyRightAnswer(text) {
         return true;
 }
 
+function getRandomBounds(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 export {
     hashString, packImages, washString, decodeFano,
     findAppropriate, findByText, forEach, includes,
-    States, stateToWord, getState,
-    findMagicButton, desc_len, getUUID, verifyRightAnswer
+    States, stateToWord, getState, createMagicButton,
+    findMagicButton, desc_len, getUUID, verifyRightAnswer,
+    getRandomBounds, uploadFormulationImages
 }
