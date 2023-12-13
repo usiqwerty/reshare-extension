@@ -1,11 +1,9 @@
-/browsers/*/distr
+# builds
+/dist
+/web-ext-artifacts
 
-.env
-.env.dev
+# node
+/node_modules
 
-/node_modules/
-
-package-lock.json
+# idea
 .idea
-dist
-web-ext-artifacts

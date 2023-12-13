@@ -1,0 +1,103 @@
+/**
+ * Based on https://codepen.io/beforesemicolon/pen/abNYjKo
+ * Author: Before Semicolon
+ */
+
+
+.syncshare-cm,
+.syncshare-cm .sub-menu {
+    position: fixed;
+    color: #000;
+    background: #fff;
+    z-index: 100;
+    padding: 5px 0;
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+.syncshare-cm .sub-menu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    display: none;
+    max-width: 200px;
+    min-width: 130px;
+    margin: 0;
+    flex-direction: column;
+}
+
+.syncshare-cm .menu-item {
+    height: 30px;
+    max-width: 200px;
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 1px solid #f2f2f2;
+    transition: 0.2s;
+}
+
+.syncshare-cm .menu-item .item-label {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.syncshare-cm           .menu-item .postfix,
+.syncshare-cm .sub-menu .menu-item .postfix {
+    margin: 0 0 0 auto;
+}
+
+/* TODO: use different aproach for vertical align */
+
+.syncshare-cm           .menu-item .postfix .arrow-icon,
+.syncshare-cm .sub-menu .menu-item .postfix .arrow-icon {
+    margin: 7px 0 7px 6px;
+}
+
+.syncshare-cm           .menu-item .postfix .content,
+.syncshare-cm .sub-menu .menu-item .postfix .content{
+    border-radius: 4px;
+    margin: 0 0 0 8px;
+    padding: 3px 4px;
+    line-height: 1;
+}
+
+.syncshare-cm           .menu-item .prefix,
+.syncshare-cm .sub-menu .menu-item .prefix {
+    margin-right: 6px;
+    padding: 4px 4px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.syncshare-cm .menu-item:last-of-type {
+    border-bottom: none;
+}
+
+.syncshare-cm .menu-item:hover {
+    background: #f2f2f2;
+}
+
+.syncshare-cm .menu-item:hover > .sub-menu {
+    display: flex;
+}
+
+.syncshare-cm.left .sub-menu {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.syncshare-cm.top .sub-menu {
+    top: 100%;
+    transform: translateY(-100%);
+}
+
+.syncshare-cm.left.top .sub-menu {
+    transform: translate(-100%, -100%);
+}
