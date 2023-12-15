@@ -2,8 +2,9 @@ import logger from "shared/debug/log";
 import browser from "webextension-polyfill";
 
 class QuizService {
-    
-    init() {
+
+    init(moodleId) {
+        this.moodleId = moodleId;
         browser.runtime.onMessage.addListener(data => {
             if (data?.type !== "quiz-review-data")
                 return;
@@ -19,13 +20,16 @@ class QuizService {
         });
 
         browser.runtime.onMessage.addListener((data, sender, sendResponse) => {
-            if (data?.type !== "solution-request")
-                return;
 
+            if (data?.type !== "solution-request")
+                return true;
+            //console.log("sol req listener:", data, sender, sendResponse);
             this.onSolutionRequest(data.payload, sendResponse);
+            return true;
         });
 
         logger.info("QuizService: initialized");
+
     }
 
     onReviewData(data) {
@@ -38,92 +42,31 @@ class QuizService {
 
     onSolutionRequest(body, sendResponse) {
         console.log("Solution request received", body);
+        //
+        console.log("the doc:", document);
 
-        if (body.qId === 1346) {
-            sendResponse([
-                {
-                    anchor: {
-                    },
-                    
-                    suggestions: [
-                        {
-                            correctness: -1,
-                            confidence: 0.87,
-                            item: {
-                                label: "A hashtag",
-                                data: {
-                                    sign: "A hashtag"
-                                }
-                            }
-                        },
-                        {
-                            correctness: 2,
-                            confidence: 0.87,
-                            item: {
-                                label: "A hashtag",
-                                data: {
-                                    sign: "A hashtag"
-                                }
-                            }
-                        }
-                    ],
-    
-                    submissions: [
-                        {
-                            correctness: 1,
-                            count: 1,
-                            item: {
-                                label: "A hashtag",
-                                data: {
-                                    sign: "A hashtag"
-                                }
-                            }
-                        },
-                        {
-                            correctness: 0,
-                            count: 1,
-                            item: {
-                                label: "A hashtag fhjhfjss",
-                                data: {
-                                    sign: "A hashtag"
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]);
-        } 
-        else if (body.qId === 1350) {
-            const item = {
-                label: "False",
-                data: {
-                    sign: "False"
-                }
-            }
-    
-            sendResponse([
-                {
-                    anchor: {
-                    },
-                    
-                    suggestions: [
-                        {
-                            correctness: 2,
-                            confidence: 0.87,
-                            item: item
-                        }
-                    ],
-    
-                    submissions: [
-                        {
-                            correctness: 2,
-                            count: 1,
-                            item: item
-                        }
-                    ]
-                }
-            ]);
-        }
+        const i = {
+
+            host: body.host,
+            courseId: body.courseId,
+            quizId: body.quizId,
+            attemptId: body.attemptId,
+            moodleId: body.moodleId,
+            questionId: body.qId,
+            questionType: body.questionType,
+        };
+        console.log('got a q: ', i);
+
+        //let xhr = new XMLHttpRequest();
+
+        const api_url="http://127.0.0.1:8000/api/get_solution";
+        let request_url = api_url + "?" + new URLSearchParams(i).toString();
+        fetch(request_url).then(r => r.text()).then(result => {
+            let result_obj = JSON.parse(result);
+            sendResponse(result_obj);//alert(result);
+            console.log("Response sent");
+        })
+
     }
 }
 

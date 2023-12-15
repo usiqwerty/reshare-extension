@@ -78,18 +78,32 @@ class QuizPage {
         }
         
         for (const question of this.questions) {
-            body.qId = question.qId;
+            //body.qId = question.qId;
 
             /* service/quiz */
+            const data_userid = document.querySelector("[data-userid]");
+            const moodleIdAsString = data_userid.getAttribute("data-userid");
             const sending = browser.runtime.sendMessage({
                 type: "solution-request",
-                payload: body
-            })
+                payload: {
+                    moodleId: moodleIdAsString,
+                    host:       this.meta.host,
+                    courseId:   this.meta.course.id,
+                    courseName: this.meta.course.name,
+                    quizId:     this.meta.quiz.id,
+                    quizName:   this.meta.quiz.name,
+                    attemptId:  this.meta.attempt.id,
+                    qId: question.qId,
+                    questionType: question.questionType,
+                    //questions:  this.serializeQuestions()
+                }
+            });
 
-            sending.then(solutions => {
+            //console.log(browser.runtime.sendMessage);
+            sending.then((solutions) => {
                 if (solutions) {
                     console.log("Solution response received", solutions);
-                    question.handleSolutions(solutions)
+                    question.handleSolutions(solutions);
                 }
             });
             sending.catch(e => Log.error(e, "Error during solution request", body))

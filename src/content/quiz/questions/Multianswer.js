@@ -8,6 +8,7 @@ class Multianswer extends Question {
     constructor(args) {
         super(args);
 
+        this.questionType = "multianswer";
         const edits        = this.container.querySelectorAll("span.subquestion > input");
         const selects      = this.container.querySelectorAll("span.subquestion > select");
         const multichoices = this.container.querySelectorAll("div.answer, table.answer");

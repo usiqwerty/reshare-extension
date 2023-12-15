@@ -10,7 +10,7 @@ class Shortanswer extends Question {
         input.parentNode.appendChild(button.element);
 
         const onClick = data => input.value = data.text;
-
+        this.questionType="shortanswer";
         return { onClick, button };
     }
 }

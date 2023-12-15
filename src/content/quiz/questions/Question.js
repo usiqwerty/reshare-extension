@@ -9,9 +9,10 @@ class Question {
         const url = new URL("a://a/a?" + postData);
 
         this.qId = parseInt(url.searchParams.get("qid"));
-
+        this.questionType="unspecified";
         /** @type {HTMLDivElement} */
         this.container = container;
+
     }
 
     /**
@@ -101,8 +102,10 @@ class Question {
             const menuOptions = [];
             const suggestions = solution?.suggestions;
             const submissions = solution?.submissions;
-            const anchor = this.createWidgetAnchor(solution.anchor);
+            const anchor = this.createWidgetAnchor(solution.anchor[0]);
 
+            console.log('sol:', solution);
+            console.log('archor', anchor);
             if (!anchor)
                 return;
 

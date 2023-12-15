@@ -14,6 +14,7 @@ class Match extends Question {
 
         this.labels  = {};
         this.options = {};
+        this.questionType = "match";
 
         for (const option of selects[0].childNodes) {
             this.options[option.innerText] = option.value;

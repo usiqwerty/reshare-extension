@@ -14,6 +14,7 @@ class Multichoice extends Question {
         this.options = {};
         this.answer  = answer;
         this.type    = inputs[0].type;
+        this.questionType = "multichoice";
 
         for (const input of inputs) {
             const label = input.nextSibling;
@@ -33,12 +34,13 @@ class Multichoice extends Question {
             this.answer.appendChild(button.element);
 
             const onClick = (data) => {
-                let choice = this.options[data.sign];
-
+                let choice = this.options[data.sign[0]]; //
+                console.log("options", this.options);
+                console.log("data", data);
                 // Try to find similar node in case 
                 // the text of the question has changed
                 if (!choice) {
-                    const candidate = Strings.findSimilar(data.sign, Object.keys(this.options));
+                    const candidate = Strings.findSimilar(data.sign[0], Object.keys(this.options)); //
 
                     if (!candidate) {
                         return;
@@ -53,14 +55,16 @@ class Multichoice extends Question {
             return { onClick, button };
         }
         else if (this.type === "checkbox") {
-            let choice = this.options[anchor.sign];
-
+            let choice = this.options[anchor]; //.sign
             // Try to find similar nodes in case 
             // the text of the question has changed
+            console.log("options:",this.options);
+            console.log("anchor:", anchor);
             if (!choice) {
-                const candidate = Strings.findSimilar(anchor.sign, Object.keys(this.options));
+                const candidate = Strings.findSimilar(anchor, Object.keys(this.options)); //.sign
 
                 if (!candidate) {
+                    console.log("Could not find such answer:", anchor);
                     return;
                 }
 
@@ -69,7 +73,10 @@ class Multichoice extends Question {
 
             const button = new MagicButton();
             choice.parentNode.insertBefore(button.element, choice.nextSibling);
-            const onClick = data => choice.checked = data.checked;
+            const onClick = (data) => {
+                choice.checked = data.sign;//data.checked;
+                //console.log(data)
+            }
 
             return { onClick, button };
         }
