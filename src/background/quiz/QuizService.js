@@ -1,25 +1,25 @@
 import logger from "shared/debug/log";
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 
 class QuizService {
 
     init(moodleId) {
         this.moodleId = moodleId;
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "quiz-review-data")
                 return;
 
             this.onReviewData(data.payload)
         });
 
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "quiz-attempt-data")
                 return;
 
             this.onAttemptData(data.payload);
         });
 
-        browser.runtime.onMessage.addListener((data, sender, sendResponse) => {
+        chrome.runtime.onMessage.addListener((data, sender, sendResponse) => { //browser
 
             if (data?.type !== "solution-request")
                 return true;
@@ -43,7 +43,7 @@ class QuizService {
     onSolutionRequest(body, sendResponse) {
         console.log("Solution request received", body);
         //
-        console.log("the doc:", document);
+        //console.log("the doc:", document);
 
         const i = {
 

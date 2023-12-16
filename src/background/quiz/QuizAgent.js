@@ -1,4 +1,4 @@
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 import Log from "shared/debug/log";
 
 const State = Object.freeze({
@@ -71,35 +71,35 @@ class QuizAgent {
         /** @type {Route[]} */
         this.routes = [];
 
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "btn-submit-attempt")
                 return;
 
             this.onSubmitAttempt(data.payload)
         });
 
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "attempt-page-open")
                 return;
 
             this.onAttemptPage(data.payload)
         });
 
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "overview-page-open")
                 return;
 
             this.onOverviewPage(data.payload)
         });
 
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "review-page-open")
                 return;
 
             this.onReviewPage(data.payload)
         });
 
-        browser.runtime.onMessage.addListener(data => {
+        chrome.runtime.onMessage.addListener(data => { //browser
             if (data?.type !== "board-page-open")
                 return;
 

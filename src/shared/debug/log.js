@@ -1,7 +1,7 @@
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 
-let PREFIX = typeof browser === "object" && typeof importScripts === "undefined"
-    ? `[${browser.runtime.getManifest().name}]` : '';
+let PREFIX = typeof chrome === "object" && typeof importScripts === "undefined" //browser
+    ? `[${chrome.runtime.getManifest().name}]` : ''; //browser
 
 let debugCount = 0;
 

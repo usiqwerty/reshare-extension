@@ -22,12 +22,12 @@ class ContextMenu extends EventEmitter {
 
         this.menu = document.createElement("ul");
         this.menu.classList.add("syncshare-cm");
-        this.menu.hidden = true;
+        this.menu.hidden = false;
 
         this.constructMenu(this.menu, options);
         document.body.appendChild(this.menu);
 
-        window.addEventListener("resize", e => this.hide());
+        window.addEventListener("resize", e => this.hide("resize listener"));
 
         document.addEventListener("click", e => {
             const buttonId = parseInt(e.target.getAttribute("ctx-menu"));
@@ -36,30 +36,32 @@ class ContextMenu extends EventEmitter {
                 return;
             }
 
-            this.hide(); 
+            //this.hide("constructor()");
         });
 
         document.addEventListener("scroll", e => {
             if (this.isShown) {
-                this.hide();
+                this.hide("scroll listener");
             }
         });
     }
 
     constructMenu(root, options) {
+        //
         for (const option of options) {
+            console.log('construct menu options', option);
             const isSubMenu = option.subMenu && option.subMenu.length > 0;
             const item = this.constructOption(option);
-
+            console.log('constructed:', item);
             item.addEventListener("click", e => {
                 e.stopPropagation();
-
+                //console.
                 if (!isSubMenu) {
                     if (option.action) {
                         option.action(option);
                     }
 
-                    this.hide();
+                    this.hide("constructMenu()");
                     this.emit("OptionClick", option);
                 }
             });
@@ -134,10 +136,11 @@ class ContextMenu extends EventEmitter {
     }
 
     show(x, y) {
+        console.log("show()");
         if (this.isShown) {
             return;
         }
-
+        console.log('starting showing');
         const { innerWidth, innerHeight } = window;
         const { offsetWidth, offsetHeight } = this.menu;
         let tX = 0;
@@ -169,12 +172,14 @@ class ContextMenu extends EventEmitter {
         this.menu.hidden = false;
         this.isShown = true;
         this.emit("MenuShown");
+        console.log('shown');
     }
 
-    hide() {
+    hide(reason) {
         if (!this.isShown) {
             return;
         }
+        console.log('hiding with reason:', reason);
 
         this.menu.hidden = true;
         this.isShown = false;

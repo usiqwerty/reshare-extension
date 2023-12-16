@@ -34,12 +34,12 @@ class Match extends Question {
     }
 
     createWidgetAnchor(anchor) {
-        let select = this.labels[anchor.sign];
-
+        let select = this.labels[anchor];//.sign
+        console.log('ancj', anchor);
         // Try to find similar nodes in case 
         // the text of the question has changed
         if (!select) {
-            const candidate = Strings.findSimilar(anchor.sign, Object.keys(this.labels));
+            const candidate = Strings.findSimilar(anchor, Object.keys(this.labels));//.sign
 
             if (!candidate) {
                 return;
@@ -52,12 +52,13 @@ class Match extends Question {
         select.parentNode.appendChild(button.element);
 
         const onClick = data => {
-            let option = this.options[data.sign];
-
+            let option = this.options[data.text];//.sign
+            console.log('data',data);
+            console.log('opt', option);
             // Try to find similar options in case 
             // the text of the question has changed
             if (!option) {
-                const candidate = Strings.findSimilar(data.sign, Object.keys(this.options));
+                const candidate = Strings.findSimilar(data.text, Object.keys(this.options));//.sign
 
                 if (!candidate) {
                     return;

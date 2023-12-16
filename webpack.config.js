@@ -59,13 +59,18 @@ module.exports = (env, argv) => {
                 templateContent: readFileSync(join(ROOT_PATH, "src/background/main.template.html"), "utf8"),
                 chunks: ["background"],
             }),
+            new HtmlWebpackPlugin({
+                filename: "src/popup.html",
+                templateContent: readFileSync(join(ROOT_PATH, "src/popup.html"), "utf8"),
+                chunks: [],
+            }),
             new GenerateJsonFromJsPlugin({
                 path: join(ROOT_PATH, "src/manifest.cjs"),
                 filename: "manifest.json",
                 data: { isChrome, isDevelopment, connectUrls, PACKAGE },
             }),
             new WebExtensionPlugin({
-                background: { entry: "background", manifest: 2 }
+                background: { entry: "background", manifest: 3 }
             }),
             new CleanWebpackPlugin()
         ],

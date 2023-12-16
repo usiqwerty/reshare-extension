@@ -3,14 +3,22 @@ import MagicButton from "shared/widgets/MagicButton";
 
 class Shortanswer extends Question {
 
+    constructor(args) {
+        super(args);
+        this.questionType="shortanswer";
+    }
     createWidgetAnchor(anchor) {
+
         const input = this.container.querySelector("span.answer > input");
 
         const button = new MagicButton();
         input.parentNode.appendChild(button.element);
 
-        const onClick = data => input.value = data.text;
-        this.questionType="shortanswer";
+        const onClick = (data) => {
+            input.value = data.text;
+            console.log("data:", data);
+        }
+
         return { onClick, button };
     }
 }

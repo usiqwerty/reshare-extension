@@ -1,5 +1,5 @@
 import Log from "shared/debug/log";
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 import MultiSource from "shared/utils/MultiSource";
 import BreadcrumbSource from "content/quiz/sources/BreadcrumbSource";
 import URLSource from "content/quiz/sources/board/URLSource";
@@ -50,7 +50,7 @@ if (!supported) {
 
 Log.info("BoardPage: Check passed");
 
-browser.runtime.sendMessage({
+chrome.runtime.sendMessage({ //browser
     type: "board-page-open",
     payload: { ...m }
 });

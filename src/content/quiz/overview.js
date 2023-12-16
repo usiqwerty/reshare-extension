@@ -1,5 +1,5 @@
 import Log from "shared/debug/log";
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 import MultiSource from "shared/utils/MultiSource";
 import BreadcrumbSource from "content/quiz/sources/BreadcrumbSource";
 import URLSource from "content/quiz/sources/quiz/URLSource";
@@ -20,7 +20,7 @@ if (!quizId) {
 
 Log.info("OverviewPage: Check passed");
 
-browser.runtime.sendMessage({
+chrome.runtime.sendMessage({ //browser
     type: "overview-page-open",
     payload: { quizId }
 });
@@ -39,7 +39,7 @@ submitBtn.addEventListener("click", event => {
         const confirmBtn = dialog.querySelector("input[type=\"button\"].btn.btn-primary");
 
         confirmBtn.addEventListener("click", event => {
-            browser.runtime.sendMessage({
+            chrome.runtime.sendMessage({ //browser
                 type: "btn-submit-attempt",
                 payload: { quizId }
             });

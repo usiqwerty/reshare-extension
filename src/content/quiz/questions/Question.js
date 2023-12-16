@@ -1,5 +1,5 @@
 import ContextMenu from "shared/widgets/ContextMenu";
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 
 class Question {
 
@@ -111,7 +111,7 @@ class Question {
 
             if (suggestions?.length > 0) {
                 const suggMenu = {
-                    label: browser.i18n.getMessage("magicMenuSuggestions"),
+                    label: chrome.i18n.getMessage("magicMenuSuggestions"), //browser
                     icon: { name: "fa-star-o" },
                     action: null,
                     subMenu: []
@@ -136,7 +136,7 @@ class Question {
 
             if (submissions?.length > 0) {
                 const subsMenu = {
-                    label: browser.i18n.getMessage("magicMenuSubmissions"),
+                    label: chrome.i18n.getMessage("magicMenuSubmissions"), //browser
                     icon: { name: "fa-bar-chart" },
                     action: null,
                     subMenu: []

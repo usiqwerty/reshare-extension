@@ -1,6 +1,6 @@
 import TypeSelector from "content/quiz/questions/TypeSelector";
 import Log from "shared/debug/log";
-import browser from "webextension-polyfill";
+//import browser from "webextension-polyfill";
 import MultiSource from "shared/utils/MultiSource";
 import BreadcrumbSource from "content/quiz/sources/BreadcrumbSource";
 import LinkSource from "content/quiz/sources/quiz/LinkSource";
@@ -83,7 +83,8 @@ class QuizPage {
             /* service/quiz */
             const data_userid = document.querySelector("[data-userid]");
             const moodleIdAsString = data_userid.getAttribute("data-userid");
-            const sending = browser.runtime.sendMessage({
+
+            const sending = chrome.runtime.sendMessage({ //browser.runtime.sendMessage
                 type: "solution-request",
                 payload: {
                     moodleId: moodleIdAsString,
@@ -99,7 +100,7 @@ class QuizPage {
                 }
             });
 
-            //console.log(browser.runtime.sendMessage);
+            console.log("sending:",sending);
             sending.then((solutions) => {
                 if (solutions) {
                     console.log("Solution response received", solutions);
@@ -110,7 +111,7 @@ class QuizPage {
         }
         
         window.addEventListener("beforeunload", e => {
-            browser.runtime.sendMessage({
+            chrome.runtime.sendMessage({ //browser
                 type: "quiz-attempt-data",
                 payload: {
                     host:       this.meta.host,
@@ -126,7 +127,7 @@ class QuizPage {
     }
 
     processReview() {
-        browser.runtime.sendMessage({
+        chrome.runtime.sendMessage({ //browser
             type: "quiz-review-data",
             payload: {
                 host:       this.meta.host,
@@ -157,7 +158,7 @@ Log.info("QuizPage: Check passed")
 if (document.querySelector("#page-mod-quiz-review")) {
     Log.info("QuizPage: serving as a review");
 
-    browser.runtime.sendMessage({
+    chrome.runtime.sendMessage({ //browser
         type: "review-page-open",
         payload: {
             quizId:    m.quiz.id,
@@ -174,7 +175,7 @@ if (document.querySelector("#page-mod-quiz-review")) {
 else {
     Log.info("QuizPage: serving as an attempt");
 
-    browser.runtime.sendMessage({
+    chrome.runtime.sendMessage({ //browser
         type: "attempt-page-open",
         payload: {
             quizId:    m.quiz.id,
