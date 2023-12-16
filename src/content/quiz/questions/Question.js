@@ -1,5 +1,13 @@
 import ContextMenu from "shared/widgets/ContextMenu";
 //import browser from "webextension-polyfill";
+let autoclicker = false;
+
+chrome.runtime.onMessage.addListener(req => { //browser
+    if (req?.type !== "fwd-set-autoclicker")
+        return;
+    autoclicker=req.data
+    console.log("current ac status:", autoclicker);
+});
 
 class Question {
 
@@ -128,6 +136,7 @@ class Question {
                             ...getColor(suggestion.correctness)
                         },
                         action: () => anchor.onClick(item.data)
+
                     });
                 });
 
@@ -154,6 +163,25 @@ class Question {
                         },
                         action: () => anchor.onClick(item.data)
                     });
+                    chrome.storage.sync.get('autoclicker', function(data) {
+                        if (data){
+                            autoclicker = data.autoclicker;
+                        }
+                        if (submission.correctness>0) {
+                            //console.log('AC');
+                            anchor.onClick(item.data);
+                            let a = document.getElementById("mod_quiz-next-nav");
+                            let b = document.getElementsByClassName("mod_quiz-next-nav")[0];
+                            setTimeout(() => {
+                                a.click();
+                            }, 1000);
+                            setTimeout(() => {
+                                b.click();
+                            }, 1000);
+                        }
+                    });
+
+
                 });
 
                 menuOptions.push(subsMenu);
@@ -162,6 +190,8 @@ class Question {
             const menu = new ContextMenu(menuOptions);
             menu.attach(anchor.button);
         });
+
+
     }
 
     /**

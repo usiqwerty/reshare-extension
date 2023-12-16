@@ -24,7 +24,7 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
     
     return {
         manifest_version: 3,
-        name: "SyncShare",
+        name: "ReShare",
         description: "__MSG_extensionDescription__",
         version: PACKAGE.version,
         homepage_url: PACKAGE.repository,
@@ -42,8 +42,12 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
             64: "icons/icon@64.png",
             128: "icons/icon@128.png"
         },
-        permissions: connectUrls.map(x => x + "/*"),
+        permissions: connectUrls.map(x => x + "/*").concat(["storage"]),
         content_security_policy: CSP(),
+        web_accessible_resources: [{
+            "resources": ["src/popup.html", "src/popup.js"],
+            "matches": ["<all_urls>"]
+        }],
         content_scripts: [
             {
                 matches: [
