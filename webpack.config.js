@@ -69,6 +69,11 @@ module.exports = (env, argv) => {
                 templateContent: readFileSync(join(ROOT_PATH, "src/popup.js"), "utf8"),
                 chunks: [],
             }),
+            new HtmlWebpackPlugin({
+                filename: "src/popup.css",
+                templateContent: readFileSync(join(ROOT_PATH, "src/popup.css"), "utf8"),
+                chunks: [],
+            }),
             new GenerateJsonFromJsPlugin({
                 path: join(ROOT_PATH, "src/manifest.cjs"),
                 filename: "manifest.json",

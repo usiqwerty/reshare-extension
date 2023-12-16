@@ -14,10 +14,10 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
             result.push(`${k} ${v.join(" ")};`)
         */
         ext_pages = "default-src 'self';";
-        connect_src=["connect-src", "'self'", ...connectUrls, isDevelopment ? "http:" : "https:"].join(" ")
+        connect_src=["connect-src", "'self'", ...connectUrls, isDevelopment ? "http:" : "https:"].join(" ")+";"
 
         return {
-            "extension_pages": ext_pages+ connect_src,
+            "extension_pages": ext_pages+ connect_src+"img-src data: ",
         }
         //return result.join(" ");
     }
@@ -45,7 +45,7 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
         permissions: connectUrls.map(x => x + "/*").concat(["storage"]),
         content_security_policy: CSP(),
         web_accessible_resources: [{
-            "resources": ["src/popup.html", "src/popup.js"],
+            "resources": ["src/popup.html", "src/popup.js", "src/popup.css"],
             "matches": ["<all_urls>"]
         }],
         content_scripts: [
