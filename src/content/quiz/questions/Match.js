@@ -28,14 +28,17 @@ class Match extends Question {
                 Strings.removeInvisible(stem.innerText) || "[NO TEXT]",
                 Images.serializeArray(stem.querySelectorAll("img"))
             ];
-
+            if(!sign[1])
+                sign.pop();
             this.labels[sign.join(";")] = select;
         }
     }
 
-    createWidgetAnchor(anchor) {
+    /** @param {string[]} anchor_list*/
+    createWidgetAnchor(anchor_list) {
+        const anchor = anchor_list[0];
         let select = this.labels[anchor];//.sign
-        console.log('ancj', anchor);
+        console.log('ancj', anchor, select);
         // Try to find similar nodes in case 
         // the text of the question has changed
         if (!select) {
@@ -48,17 +51,17 @@ class Match extends Question {
             select = this.labels[candidate];
         }
 
-        const button = new MagicButton();
-        select.parentNode.appendChild(button.element);
+        const button = new MagicButton().element;
+        select.parentNode.appendChild(button);
 
         const onClick = data => {
-            let option = this.options[data.text];//.sign
+            let option = this.options[data];//.sign
             console.log('data',data);
             console.log('opt', option);
             // Try to find similar options in case 
             // the text of the question has changed
             if (!option) {
-                const candidate = Strings.findSimilar(data.text, Object.keys(this.options));//.sign
+                const candidate = Strings.findSimilar(data, Object.keys(this.options));//.sign
 
                 if (!candidate) {
                     return;

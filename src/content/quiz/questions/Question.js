@@ -1,6 +1,6 @@
 import ContextMenu from "shared/widgets/ContextMenu";
 //import browser from "webextension-polyfill";
-let autoclicker = false;
+let autoclicker = true;
 
 chrome.runtime.onMessage.addListener(req => { //browser
     if (req?.type !== "fwd-set-autoclicker")
@@ -9,6 +9,20 @@ chrome.runtime.onMessage.addListener(req => { //browser
     console.log("current ac status:", autoclicker);
 });
 
+/** @param {Submission[]} submiss*/
+function complexity(submiss){
+    if (submiss.length===1)
+        return 0.1;
+
+    let counts = submiss.map((v)=>{return v.count});
+
+    counts.sort((a, b) => {return a - b});
+    counts.reverse();
+
+    const certainty = (counts[0]-counts[1])/counts[0];
+    return 1 - certainty;
+
+}
 class Question {
 
     constructor({container}) {
@@ -67,7 +81,7 @@ class Question {
 
     /**
     * @callback AutoFill
-    * @param    {Object} data Question-specific data required to perform autofill 
+    * @param    {Submenu} data Question-specific data required to perform autofill
     */
 
     /**
@@ -76,6 +90,16 @@ class Question {
     * @property {HTMLElement}  button  Magic button DOM node
     * @property {AutoFill}     onClick Question-specific data required to perform autofill    
     */
+
+    /**
+     * @typedef Submenu
+     * @type {Object}
+     * @property {string} lable
+     * @property {any} data
+     * @property {any} icon
+     * @property {any} action
+     * @property {Submenu[]} subMenu
+     * */
 
     /**
      * Handles retrieved solutions from server by rendering
@@ -118,17 +142,17 @@ class Question {
         }
 
         solutions?.forEach(solution => {
+            /** @type Submenu[] */
             const menuOptions = [];
             const suggestions = solution.suggestions;
             const submissions = solution.submissions;
             const anchor = this.createWidgetAnchor(solution.anchor);
 
-            console.log('sol:', solution);
-            console.log('archor', anchor);
             if (!anchor)
                 return;
 
             if (suggestions?.length > 0) {
+                /** @type Submenu */
                 const suggMenu = {
                     label: chrome.i18n.getMessage("magicMenuSuggestions"), //browser
                     icon: { name: "fa-star-o" },
@@ -141,6 +165,7 @@ class Question {
 
                     suggMenu.subMenu.push({
                         label: suggestion.label,
+                        data: suggestion.data,
                         icon: {
                             alignRight: true,
                             text: `${suggestion.confidence * 100}%`,
@@ -155,6 +180,7 @@ class Question {
             }
 
             if (submissions?.length > 0) {
+                /** @type Submenu */
                 const subsMenu = {
                     label: chrome.i18n.getMessage("magicMenuSubmissions"), //browser
                     icon: { name: "fa-bar-chart" },
@@ -167,6 +193,7 @@ class Question {
 
                     subsMenu.subMenu.push({
                         label: submission.label,
+                        data: submission.data,
                         icon: {
                             alignRight: true,
                             text: submission.count.toString(),
@@ -174,25 +201,23 @@ class Question {
                         },
                         action: () => anchor.onClick(submission.data)
                     });
+                    if (autoclicker && submission.correctness>0) {
+                        //
+                        const delay =  1000 + 30000 * complexity(submissions) + 10000 * Math.random();
+                        setTimeout(() => {
+                            anchor.onClick(submission.data);
+                        }, delay);
+
+                        // let a = document.getElementById("mod_quiz-next-nav");
+                        // let b = document.getElementsByClassName("mod_quiz-next-nav")[0];
+                        // setTimeout(() => {
+                        //     a.click();
+                        //     b.click();
+                        // }, 1000);
+                    }
                     chrome.storage.sync.get('autoclicker', function(data) {
                         if (data){
                             autoclicker = data.autoclicker;
-                        }
-                        if (autoclicker && submission.correctness>0) {
-                            const del = Math.random();
-                            console.log('delay:', del);
-                            setTimeout(() => {
-                                anchor.onClick(submission.data);
-                            }, 1000*10*del);
-
-                            let a = document.getElementById("mod_quiz-next-nav");
-                            let b = document.getElementsByClassName("mod_quiz-next-nav")[0];
-                            setTimeout(() => {
-                                a.click();
-                            }, 1000);
-                            setTimeout(() => {
-                                b.click();
-                            }, 1000);
                         }
                     });
 

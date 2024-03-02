@@ -13,6 +13,7 @@ function getNextID() {
 
 class ContextMenu extends EventEmitter {
 
+    /** @param {Submenu[]} options  */
     constructor(options) {
         super();
 
@@ -46,6 +47,10 @@ class ContextMenu extends EventEmitter {
         });
     }
 
+    /**
+     *  @param {Submenu[]} options
+     *  @param {any} root
+     * */
     constructMenu(root, options) {
         //
         for (const option of options) {

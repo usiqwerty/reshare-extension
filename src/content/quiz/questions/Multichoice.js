@@ -27,11 +27,12 @@ class Multichoice extends Question {
             this.options[sign.join(";")] = input;
         }
     }
-
-    createWidgetAnchor(anchor) {
+    /** @param {string[]} anchor_list*/
+    createWidgetAnchor(anchor_list) {
+        const anchor=anchor_list[0]
         if (this.type === "radio") {
-            const button = new MagicButton();
-            this.answer.appendChild(button.element);
+            const button = new MagicButton().element;
+            this.answer.appendChild(button);
 
             const onClick = (data) => {
                 let choice = this.options[data.sign[0]]; //
@@ -71,10 +72,10 @@ class Multichoice extends Question {
                 choice = this.options[candidate];
             }
 
-            const button = new MagicButton();
-            choice.parentNode.insertBefore(button.element, choice.nextSibling);
+            const button = new MagicButton().element;
+            choice.parentNode.insertBefore(button, choice.nextSibling);
             const onClick = (data) => {
-                choice.checked = data.sign;//data.checked;
+                choice.checked = data.checked;//data.checked;
                 //console.log(data)
             }
 
