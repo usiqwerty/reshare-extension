@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
     const isDevelopment = argv?.mode === "development";
     const isChrome = Boolean(env?.chrome);
 
-    const connectUrls = isDevelopment ? ["http://127.0.0.1:8000"] : ["NOTHING YOTA"];
+    const connectUrls = isDevelopment ? [] : [];
 
     return {
         context: ROOT_PATH,
