@@ -1,6 +1,6 @@
 {
     "name": "reshare-extension",
-    "version": "1.0.0",
+    "version": "1.0",
     "description": "Synchronize and share right answers to Moodle quizzes.",
     "main": "main.js",
     "scripts": {
