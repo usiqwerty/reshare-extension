@@ -45,7 +45,7 @@ class QuizService {
         //
         //console.log("the doc:", document);
 
-        const i = {
+        const question = {
 
             host: body.host,
             courseId: body.courseId,
@@ -54,13 +54,25 @@ class QuizService {
             moodleId: body.moodleId,
             questionId: body.qId,
             questionType: body.questionType,
+            client: '1.1.6',
         };
-        console.log('got a q: ', i);
+        console.log('got a q: ', question);
 
         //let xhr = new XMLHttpRequest();
 
-        const api_url="http://127.0.0.1:8000/api/get_solution";
-        let request_url = api_url + "?" + new URLSearchParams(i).toString();
+        const api_url= "https://syncshare.naloaty.me/api/v2/";
+        //quiz/solution?
+        // host=exam1.urfu.ru
+        // &courseId=857
+        // &quizId=13650
+        // &attemptId=3686611
+        // &moodleId=455433
+        // &questionId=17291537
+        // &questionType=multianswer
+        // &client=1.1.6
+
+        //"http://127.0.0.1:8000/api/get_solution"; //"https://usiqwerty.pythonanywhere.com/api/get_solution"; //
+        let request_url = api_url + "quiz/solution?" + new URLSearchParams(question).toString();
         fetch(request_url).then(r => r.text()).then(result => {
             let result_obj = JSON.parse(result);
             sendResponse(result_obj);//alert(result);

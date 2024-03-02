@@ -10,5 +10,4 @@ chrome.storage.sync.get('autoclicker', function(data) {
 checkbox.addEventListener("change", ()=>{
     chrome.runtime.sendMessage({type:"set-autoclicker", data:checkbox.checked});
     //chrome.storage.sync.set({ autoclicker: checkbox.checked });
-})
-
+});

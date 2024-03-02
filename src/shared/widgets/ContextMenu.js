@@ -49,10 +49,9 @@ class ContextMenu extends EventEmitter {
     constructMenu(root, options) {
         //
         for (const option of options) {
-            console.log('construct menu options', option);
             const isSubMenu = option.subMenu && option.subMenu.length > 0;
             const item = this.constructOption(option);
-            console.log('constructed:', item);
+
             item.addEventListener("click", e => {
                 e.stopPropagation();
                 //console.
@@ -136,7 +135,6 @@ class ContextMenu extends EventEmitter {
     }
 
     show(x, y) {
-        console.log("show()");
         if (this.isShown) {
             return;
         }
@@ -172,14 +170,12 @@ class ContextMenu extends EventEmitter {
         this.menu.hidden = false;
         this.isShown = true;
         this.emit("MenuShown");
-        console.log('shown');
     }
 
     hide(reason) {
         if (!this.isShown) {
             return;
         }
-        console.log('hiding with reason:', reason);
 
         this.menu.hidden = true;
         this.isShown = false;
@@ -187,8 +183,8 @@ class ContextMenu extends EventEmitter {
     }
 
     attach(button) {
-        button.element.setAttribute("ctx-menu", this.menuId);
-        button.element.addEventListener("click", e => {
+        button.setAttribute("ctx-menu", this.menuId);
+        button.addEventListener("click", e => {
             this.show(e.clientX, e.clientY);
         });
     }

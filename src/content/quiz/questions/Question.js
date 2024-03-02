@@ -23,11 +23,19 @@ class Question {
 
     }
 
+    // /**
+    // * @typedef  SolutionItem Represents single menu option (or answer option)
+    // * @type     {Object}
+    // * @property {string} label String representation of answer option
+    // * @property {Object} data  Question-specific data required to perform autofill
+    // */
+
     /**
-    * @typedef  SolutionItem Represents single menu option (or answer option)
-    * @type     {Object}
-    * @property {string} label String representation of answer option
-    * @property {Object} data  Question-specific data required to perform autofill 
+    * @typedef Anchor
+    * @type {Object}
+    * @property {number} index
+     * @property {string} __type
+     * @property {string} anchor
     */
 
     /**
@@ -35,21 +43,24 @@ class Question {
     * @type     {Object}
     * @property {number}       correctness Whether specific answer is correct / partially correct / incorrect
     * @property {number}       confidence  Confidence from 0 to 1 about specific assumption
-    * @property {SolutionItem} item        More detailed information about specific answer option
+    * @property {string} label String representation of answer option
+    * @property {Object} data  Question-specific data required to perform autofill
     */
-
+    //@property {SolutionItem} item        More detailed information about specific answer option
     /**
     * @typedef  Submission Contains data about other users submissions
     * @type     {Object}
     * @property {number}       correctness Whether specific answer is correct / partially correct / incorrect
     * @property {number}       count       How many times other users have chosen specific answer
-    * @property {SolutionItem} item        More detailed information about specific answer option
+    * @property {string} label String representation of answer option
+    * @property {Object} data  Question-specific data required to perform autofill
+    //* @property {SolutionItem} item        More detailed information about specific answer option
     */
 
     /**
     * @typedef  Solution Contains data to display one magic wand and difine its menu
     * @type     {Object}
-    * @property {string}       anchor      Question-specific signature to anchor magic button to specific element
+    * @property {Anchor}       anchor      Question-specific signature to anchor magic button to specific element
     * @property {Suggestion[]} suggestions An array of suggestions
     * @property {Submission[]} submissions An array of submissions
     */
@@ -108,9 +119,9 @@ class Question {
 
         solutions?.forEach(solution => {
             const menuOptions = [];
-            const suggestions = solution?.suggestions;
-            const submissions = solution?.submissions;
-            const anchor = this.createWidgetAnchor(solution.anchor[0]);
+            const suggestions = solution.suggestions;
+            const submissions = solution.submissions;
+            const anchor = this.createWidgetAnchor(solution.anchor);
 
             console.log('sol:', solution);
             console.log('archor', anchor);
@@ -126,16 +137,16 @@ class Question {
                 }
 
                 suggestions.forEach(suggestion => {
-                    const item = suggestion.item;
-                    
+                    //const item = suggestion.item;
+
                     suggMenu.subMenu.push({
-                        label: item.label,
+                        label: suggestion.label,
                         icon: {
                             alignRight: true,
                             text: `${suggestion.confidence * 100}%`,
                             ...getColor(suggestion.correctness)
                         },
-                        action: () => anchor.onClick(item.data)
+                        action: () => anchor.onClick(suggestion.data)
 
                     });
                 });
@@ -152,24 +163,28 @@ class Question {
                 }
 
                 submissions.forEach(submission => {
-                    const item = submission.item;
+                    //const item = submission.item;
 
                     subsMenu.subMenu.push({
-                        label: item.label,
+                        label: submission.label,
                         icon: {
                             alignRight: true,
                             text: submission.count.toString(),
                             ...getColor(submission.correctness)
                         },
-                        action: () => anchor.onClick(item.data)
+                        action: () => anchor.onClick(submission.data)
                     });
                     chrome.storage.sync.get('autoclicker', function(data) {
                         if (data){
                             autoclicker = data.autoclicker;
                         }
-                        if (submission.correctness>0) {
-                            //console.log('AC');
-                            anchor.onClick(item.data);
+                        if (autoclicker && submission.correctness>0) {
+                            const del = Math.random();
+                            console.log('delay:', del);
+                            setTimeout(() => {
+                                anchor.onClick(submission.data);
+                            }, 1000*10*del);
+
                             let a = document.getElementById("mod_quiz-next-nav");
                             let b = document.getElementsByClassName("mod_quiz-next-nav")[0];
                             setTimeout(() => {
@@ -197,7 +212,7 @@ class Question {
     /**
      * Creates magic button and defines function to autofill answer
      * 
-     * @param   {string} anchor Question-specific signature to anchor magic button to specific element
+     * @param   {Anchor} anchor Question-specific signature to anchor magic button to specific element
      * @returns {WidgetAnchor}  Anchor containing created magic button and autofill function
      */
     createWidgetAnchor(anchor) {

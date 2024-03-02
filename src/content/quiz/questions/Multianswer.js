@@ -13,7 +13,7 @@ class Multianswer extends Question {
         const selects      = this.container.querySelectorAll("span.subquestion > select");
         const multichoices = this.container.querySelectorAll("div.answer, table.answer");
 
-        const getSlot = node => node.name.match(/sub\d{1,}/)[0];
+        const getSlot = node => node.name.match(/sub(\d+)/)[1];
 
         this.edit        = {};
         this.select      = {};
@@ -69,9 +69,11 @@ class Multianswer extends Question {
     createWidgetAnchor(anchor) {
         let subq = null;
 
+        console.log("creating anchor:", anchor);
+        console.log("the select", this.select);
         if ((subq = this.select[anchor.index])) {
-            const button = new MagicButton();
-            subq.node.parentNode.appendChild(button.element);
+            const button = new MagicButton().element;
+            subq.node.parentNode.appendChild(button);
 
             const onClick = (data) => {
                 let option = subq.optionMap[data.sign];
@@ -96,8 +98,8 @@ class Multianswer extends Question {
         else if ((subq = this.multichoice[anchor.index])) {
 
             if ("radio" === subq.type) {
-                const button = new MagicButton();
-                subq.answer.appendChild(button.element);
+                const button = new MagicButton().element;
+                subq.answer.appendChild(button);
 
                 const onClick = (data) => {
                     let choice = subq.options[data.sign];
@@ -128,15 +130,15 @@ class Multianswer extends Question {
                 if (!choice) {
                     const candiate = Strings.findSimilar(anchor.sign, Object.keys(subq.options));
 
-                    if (!candiate) {
-                        return;
-                    }
+                    // if (!candiate) {
+                    //     return;
+                    // }
 
                     choice = subq.options[candiate];
                 }
     
-                const button = new MagicButton();
-                choice.parentNode.insertBefore(button.element, choice.nextSibling);
+                const button = new MagicButton().element;
+                choice.parentNode.insertBefore(button, choice.nextSibling);
                 const onClick = data => choice.checked = data.checked;
     
                 return { onClick, button };
@@ -144,8 +146,8 @@ class Multianswer extends Question {
 
         }
         else if ((subq = this.edit[anchor.index])) {
-            const button = new MagicButton();
-            subq.input.parentNode.appendChild(button.element);
+            const button = new MagicButton().element;
+            subq.input.parentNode.appendChild(button);
 
             const onClick = (value) => {
                 subq.input.value = value.text;

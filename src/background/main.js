@@ -19,6 +19,7 @@ chrome.runtime.onMessage.addListener(req => { //browser
     ac = req.data;
     //chrome.runtime.sendMessage({type:"fwd-set-autoclicker", data: ac})
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        console.log(tabs);
         chrome.tabs.sendMessage(tabs[0].id, {type:"fwd-set-autoclicker", data: ac});
     });
     chrome.storage.sync.set({ autoclicker: ac });
