@@ -1,6 +1,6 @@
 {
     "name": "reshare-extension",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Synchronize and share right answers to Moodle quizzes.",
     "main": "main.js",
     "scripts": {
@@ -15,17 +15,17 @@
         "start:chrome": "npm run web-ext -- -t chromium -u chrome://extensions/ -u https://school.moodledemo.net/",
         "start:firefox": "npm run web-ext -- -u about:debugging#/runtime/this-firefox -u https://school.moodledemo.net/"
     },
-    "repository": "https://github.com/Naloaty/syncshare-extension",
+    "repository": "https://github.com/usiqwerty/syncshare-extension",
     "keywords": [
         "moodle",
         "quiz"
     ],
-    "author": "Naloaty <naloaty.dev@gmail.com>",
+    "author": "usiqwerty",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/Naloaty/syncshare-extension/issues"
+        "url": "https://github.com/usiqwerty/syncshare-extension/issues"
     },
-    "homepage": "https://github.com/Naloaty/syncshare-extension#readme",
+    "homepage": "https://github.com/usiqwerty/syncshare-extension#readme",
     "devDependencies": {
         "clean-webpack-plugin": "^4.0.0-alpha.0",
         "copy-webpack-plugin": "^9.0.0",
