@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
     const isDevelopment = argv?.mode === "development";
     const isChrome = Boolean(env?.chrome);
 
-    const connectUrls = isDevelopment ? [] : [];
+    const connectUrls = ["https://syncshare.naloaty.me"];//isDevelopment ? [] : [];
 
     return {
         context: ROOT_PATH,
@@ -80,7 +80,7 @@ module.exports = (env, argv) => {
                 data: { isChrome, isDevelopment, connectUrls, PACKAGE },
             }),
             new WebExtensionPlugin({
-                background: { entry: "background", manifest: 3 }
+                background: { entry: "background", manifest: isChrome? 3: 2 }
             }),
             new CleanWebpackPlugin()
         ],

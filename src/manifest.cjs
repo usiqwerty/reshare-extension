@@ -16,25 +16,32 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
         ext_pages = "default-src 'self';";
         connect_src=["connect-src", "'self'", ...connectUrls, isDevelopment ? "http:" : "https:"].join(" ")+";"
 
-        return {
-            "extension_pages": ext_pages+ connect_src+"img-src data: ",
+        if (isChrome) {
+            return {
+                "extension_pages": ext_pages + connect_src + "img-src data: ",
+            }
+        }
+        else{
+            return ext_pages + connect_src + "img-src data: ";
         }
         //return result.join(" ");
     }
     
     return {
-        manifest_version: 3,
+        manifest_version: isChrome? 3: 2,
         name: "ReShare",
         description: "__MSG_extensionDescription__",
         version: PACKAGE.version,
         homepage_url: PACKAGE.repository,
         author: PACKAGE.author,
         default_locale: "en",
-        action:{
-            default_popup:"src/popup.html",
-            default_title: "ReShare",
-            browser_style: true,
-        },
+        ...(isChrome? {
+            action: {
+                default_popup: "src/popup.html",
+                default_title: "ReShare",
+                browser_style: true,
+            }
+        }: {}),
         icons: {
             16: "icons/icon@16.png",
             24: "icons/icon@24.png",
@@ -44,10 +51,12 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
         },
         permissions: connectUrls.map(x => x + "/*").concat(["storage"]),
         content_security_policy: CSP(),
-        web_accessible_resources: [{
-            "resources": ["src/popup.html", "src/popup.js", "src/popup.css"],
-            "matches": ["<all_urls>"]
-        }],
+        web_accessible_resources:
+            (isChrome?[{
+                "resources": ["src/popup.html", "src/popup.js", "src/popup.css"],
+                "matches": ["<all_urls>"]
+            }] : ["src/popup.html", "src/popup.js", "src/popup.css"])
+            ,
         content_scripts: [
             {
                 matches: [
@@ -94,7 +103,10 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
                 run_at: "document_end"
             }],
         background: {
-            service_worker: "src/background.js"
+            ...(isChrome?
+                {service_worker: "src/background.js"}:
+                {scripts: ["src/background.js", "src/commons.js"], type:"module" })
+
         },
         ...(isChrome ? {
             update_url: "https://clients2.google.com/service/update2/crx"

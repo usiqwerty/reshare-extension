@@ -5,7 +5,7 @@
     "main": "main.js",
     "scripts": {
         "dev:chrome": "webpack --mode development --env chrome",
-        "dev:firefox": "webpack --mode development --watch",
+        "dev:firefox": "webpack --mode development --env firefox",
         "build:chrome": "webpack --mode production --env chrome",
         "build:firefox": "webpack --mode production",
         "web-ext": "web-ext run -s dist",
@@ -39,7 +39,10 @@
         "webpack-target-webextension": "^1.0.2"
     },
     "dependencies": {
+        "browser-namespace": "^1.4.0",
         "events": "^3.3.0",
-        "string-similarity": "^4.0.4"
+        "string-similarity": "^4.0.4",
+        "web-ext": "^7.11.0",
+        "webextension-polyfill": "^0.10.0"
     }
 }
