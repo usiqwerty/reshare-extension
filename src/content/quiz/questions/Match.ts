@@ -1,9 +1,13 @@
-import Question from "content/quiz/questions/Question";
-import * as Images from "shared/utils/images";
-import * as Strings from "shared/utils/strings";
-import MagicButton from "shared/widgets/MagicButton";
+import Question from "../../../content/quiz/questions/Question";
+import * as Images from "../../../shared/utils/images";
+import * as Strings from "../../../shared/utils/strings";
+import MagicButton from "../../../shared/widgets/MagicButton";
 
 class Match extends Question {
+    labels: {};
+    private options: {};
+    container: any;
+    questionType: string;
 
     constructor(args) {
         super(args);

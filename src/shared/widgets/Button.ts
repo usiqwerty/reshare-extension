@@ -1,4 +1,6 @@
 class Button {
+    element: void;
+    private name: Error;
 
     constructor() {
         this.element = this.createElement();

@@ -1,4 +1,4 @@
-import { log } from "@/core/log";
+//import { log } from "@/core/log";
 
 const PageParser = (() => {
 
@@ -24,21 +24,27 @@ const PageParser = (() => {
     /* courseId, courseName, quizName */
     const parseBreadcrumb = () => {
         const links = document.querySelectorAll(".breadcrumb a");
-        const result = {}
+        const result = {
+            courseName: "",
+            courseId: undefined,
+            quizName: "",
+            quizId: undefined
+        }
 
         for (let link of links) {
-            const url = new URL(link.href);
+
+            const url = new URL((link as HTMLLinkElement).href);
 
             if (url.pathname.includes("/course/view.php")) {
                 if (result.courseName) continue;
 
                 result.courseId = parseInt(url.searchParams.get("id"));
-                result.courseName = link.title;
+                result.courseName = (link as HTMLLinkElement).title;
             }
             else if (url.pathname.includes("/mod/quiz/view.php")) {
                 if (result.quizName) continue;
 
-                result.quizName = link.innerText;
+                result.quizName = (link as HTMLLinkElement).innerText;
                 result.quizId = parseInt(url.searchParams.get("id"));
             }
         }
@@ -54,7 +60,10 @@ const PageParser = (() => {
         }
 
         const body = document.querySelector("body");
-        const result = {};
+        const result = {
+            courseId: undefined,
+            quizId: undefined
+        };
 
         for (let klass of body.classList) {
             if (klass.startsWith("course-")) {
@@ -70,7 +79,9 @@ const PageParser = (() => {
 
     /* quizName */
     const parseWindowTitle = () => {
-        const result = {};
+        const result = {
+            quizName: undefined
+        };
         const isReview = document.querySelector("#page-mod-quiz-review")
         const title = document.querySelector("title").innerText;
 
@@ -86,7 +97,9 @@ const PageParser = (() => {
 
     /* courseName */
     const parseHeading = () => {
-        const result = {}
+        const result = {
+            courseName: undefined
+        }
         const heading = document.querySelector("h1")
 
         if (heading != null) {
@@ -129,6 +142,6 @@ const PageParser = (() => {
     }
 })();
 
-log("Page meta parsed");
+console.log("Page meta parsed");
 
 export default PageParser.getMeta();

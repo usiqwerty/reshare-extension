@@ -1,4 +1,4 @@
-import ContextMenu from "shared/widgets/ContextMenu";
+import ContextMenu from "../../../shared/widgets/ContextMenu";
 //import browser from "webextension-polyfill";
 let autoclicker = true;
 
@@ -24,6 +24,10 @@ function complexity(submiss){
 
 }
 class Question {
+    private qId: number;
+    questionType: string;
+    container: any;
+    private name: Error;
 
     constructor({container}) {
 
@@ -31,7 +35,7 @@ class Question {
         const url = new URL("a://a/a?" + postData);
 
         this.qId = parseInt(url.searchParams.get("qid"));
-        this.questionType="unspecified";
+        //this.questionType="unspecified";
         /** @type {HTMLDivElement} */
         this.container = container;
 
@@ -85,10 +89,10 @@ class Question {
     */
 
     /**
-    * @typedef  WidgetAnchor Contains magic button and function to perform autofill 
+    * @typedef  WidgetAnchor Contains magic button and function to perform autofill
     * @type     {Object}
     * @property {HTMLElement}  button  Magic button DOM node
-    * @property {AutoFill}     onClick Question-specific data required to perform autofill    
+    * @property {AutoFill}     onClick Question-specific data required to perform autofill
     */
 
     /**
@@ -111,7 +115,10 @@ class Question {
         function getColor(correctness) {
 
             // Default correctness - unknown
-            const color = {}
+            const color = {
+                backColor: undefined,
+                textColor: undefined
+            }
 
             switch(correctness) {
                 // Incorrect
@@ -146,7 +153,7 @@ class Question {
             const menuOptions = [];
             const suggestions = solution.suggestions;
             const submissions = solution.submissions;
-            const anchor = this.createWidgetAnchor(solution.anchor);
+            const anchor:any = this.createWidgetAnchor(solution.anchor);
 
             if (!anchor)
                 return;

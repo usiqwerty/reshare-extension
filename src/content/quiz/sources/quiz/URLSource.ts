@@ -1,6 +1,7 @@
-import DataSource from "shared/utils/DataSource";
+import DataSource from "../../../../shared/utils/DataSource";
 
 class URLSource extends DataSource {
+    data: any;
 
     evaluate() {
         const url = new URL(window.location.href);

@@ -1,8 +1,8 @@
-import Log from "shared/debug/log";
+import Log from "../../shared/debug/log";
 //import browser from "webextension-polyfill";
-import MultiSource from "shared/utils/MultiSource";
-import BreadcrumbSource from "content/quiz/sources/BreadcrumbSource";
-import URLSource from "content/quiz/sources/board/URLSource";
+import MultiSource from "../../shared/utils/MultiSource";
+import BreadcrumbSource from "./sources/BreadcrumbSource";
+import URLSource from "./sources/board/URLSource";
 
 const page = new MultiSource(
     new BreadcrumbSource(),

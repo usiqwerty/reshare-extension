@@ -5,6 +5,7 @@
 
 import { EventEmitter } from "events";
 
+
 let menuID = 1;
 
 function getNextID() {
@@ -12,6 +13,12 @@ function getNextID() {
 }
 
 class ContextMenu extends EventEmitter {
+
+
+    private options: any;
+    private isShown: boolean;
+    private menuId: number;
+    private menu: any;
 
     /** @param {Submenu[]} options  */
     constructor(options) {
@@ -31,13 +38,14 @@ class ContextMenu extends EventEmitter {
         window.addEventListener("resize", e => this.hide("resize listener"));
 
         document.addEventListener("click", e => {
+            // @ts-ignore
             const buttonId = parseInt(e.target.getAttribute("ctx-menu"));
 
             if (buttonId === this.menuId) {
                 return;
             }
 
-            //this.hide("constructor()");
+            this.hide("constructor()");
         });
 
         document.addEventListener("scroll", e => {
@@ -66,6 +74,7 @@ class ContextMenu extends EventEmitter {
                     }
 
                     this.hide("constructMenu()");
+                    // @ts-ignore
                     this.emit("OptionClick", option);
                 }
             });
@@ -146,8 +155,8 @@ class ContextMenu extends EventEmitter {
         console.log('starting showing');
         const { innerWidth, innerHeight } = window;
         const { offsetWidth, offsetHeight } = this.menu;
-        let tX = 0;
-        let tY = 0;
+        let tX = "0";
+        let tY = "0";
 
         this.menu.classList.remove("left");
         this.menu.classList.remove("top");
@@ -174,7 +183,7 @@ class ContextMenu extends EventEmitter {
         
         this.menu.hidden = false;
         this.isShown = true;
-        this.emit("MenuShown");
+        //this.emit("MenuShown");
     }
 
     hide(reason) {
@@ -184,6 +193,7 @@ class ContextMenu extends EventEmitter {
 
         this.menu.hidden = true;
         this.isShown = false;
+        // @ts-ignore
         this.emit("MenuHidden");
     }
 

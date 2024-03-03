@@ -1,7 +1,20 @@
 class DataSource {
+    data: {
+        quizId: number;
+        quizName: any;
+        courseId: number;
+        courseName: any;
+        bcItems: any[];
+    };
 
     constructor() {
-        this.data = {}
+        this.data = {
+            quizId: null,
+            quizName: null,
+            courseId: null,
+            courseName: null,
+            bcItems: [],
+        };
         this.evaluate();
     }
 

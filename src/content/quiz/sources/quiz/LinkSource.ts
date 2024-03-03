@@ -1,9 +1,10 @@
-import DataSource from "shared/utils/DataSource";
+import DataSource from "../../../../shared/utils/DataSource";
 
 class LinkSource extends DataSource {
+    data: any;
 
     evaluate() {
-        const link = document.querySelector("a.endtestlink.aalink");
+        const link:HTMLLinkElement = document.querySelector("a.endtestlink.aalink");
 
         if (link) {
             const url = new URL(link.href);

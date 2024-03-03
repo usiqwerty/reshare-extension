@@ -1,4 +1,5 @@
 class MultiSource {
+    private sources: any[];
 
     /**
     * @param {DataSource} sources

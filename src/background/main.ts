@@ -1,7 +1,7 @@
-import QuizService from "background/quiz/QuizService";
-import QuizAgent from "background/quiz/QuizAgent";
+import QuizService from "./quiz/QuizService";
+import QuizAgent from "./quiz/QuizAgent";
 
-new QuizService().init();
+new QuizService().init(null);
 new QuizAgent().init();
 //
 // let ac = false;

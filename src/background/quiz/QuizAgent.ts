@@ -1,5 +1,7 @@
 //import browser from "webextension-polyfill";
-import Log from "shared/debug/log";
+//import chrome from "browser-namespace/dist/commonjs/chrome-types";
+
+import Log from "../../shared/debug/log";
 
 const State = Object.freeze({
     New: -1,
@@ -11,6 +13,11 @@ const State = Object.freeze({
 })
 
 class Route {
+    state: number;
+    host: null;
+    course: { name: null; id: number };
+    quiz: { name: null; id: number };
+    private attemptId: number;
 
     constructor() {
         /** @type {number} */
@@ -66,6 +73,7 @@ class Route {
 }
 
 class QuizAgent {
+    private routes: any[];
 
     init() {
         /** @type {Route[]} */

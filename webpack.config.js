@@ -23,12 +23,12 @@ module.exports = (env, argv) => {
         mode: isDevelopment ? "development" : "production",
         entry: {
             /** Background */
-            background: join(ROOT_PATH, "src/background/main.js"),
+            background: join(ROOT_PATH, "src/background/main.ts"),
 
             /** Content */
-            quizattempt: join(ROOT_PATH, "src/content/quiz/main.js"),
-            quizoverview: join(ROOT_PATH, "src/content/quiz/overview.js"),
-            quizboard: join(ROOT_PATH, "src/content/quiz/board.js")
+            quizattempt: join(ROOT_PATH, "src/content/quiz/main.ts"),
+            quizoverview: join(ROOT_PATH, "src/content/quiz/overview.ts"),
+            quizboard: join(ROOT_PATH, "src/content/quiz/board.ts")
         },
         stats: {
             errorDetails: true
@@ -38,7 +38,7 @@ module.exports = (env, argv) => {
             path: join(ROOT_PATH, "dist")
         },
         resolve: {
-            extensions: [".js"],
+            extensions: [".js", ".ts"],
             modules: [join(ROOT_PATH, "src"), "node_modules"]
             // alias: {} 
         },
@@ -95,6 +95,14 @@ module.exports = (env, argv) => {
                     }
                 }
             }
+        },
+        module: {
+            rules: [
+                // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+                { test: /\.tsx?$/, loader: "ts-loader" },
+                // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+                { test: /\.js$/, loader: "source-map-loader" },
+            ],
         },
         devtool: isDevelopment ? "inline-source-map" : undefined
     }

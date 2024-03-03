@@ -1,9 +1,14 @@
-import Question from "content/quiz/questions/Question"
-import * as Strings from "shared/utils/strings"
-import * as Images from "shared/utils/images"
-import MagicButton from "shared/widgets/MagicButton"
+import Question from "../../../content/quiz/questions/Question"
+import * as Strings from "../../../shared/utils/strings"
+import * as Images from "../../../shared/utils/images"
+import MagicButton from "../../../shared/widgets/MagicButton"
 
 class Multichoice extends Question {
+    container: any;
+    private options: {};
+    private type: any;
+    questionType: string;
+    private answer: any;
 
     constructor(args) {
         super(args);

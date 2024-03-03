@@ -1,12 +1,14 @@
-import TypeSelector from "content/quiz/questions/TypeSelector";
-import Log from "shared/debug/log";
+import TypeSelector from "../../content/quiz/questions/TypeSelector";
+import Log from "../../shared/debug/log";
 //import browser from "webextension-polyfill";
-import MultiSource from "shared/utils/MultiSource";
-import BreadcrumbSource from "content/quiz/sources/BreadcrumbSource";
-import LinkSource from "content/quiz/sources/quiz/LinkSource";
-import URLSource from "content/quiz/sources/quiz/URLSource";
+import MultiSource from "../../shared/utils/MultiSource";
+import BreadcrumbSource from "./sources/BreadcrumbSource";
+import LinkSource from "./sources/quiz/LinkSource";
+import URLSource from "./sources/quiz/URLSource";
 
 class QuizPage {
+    meta: { quiz: { name: any; id: any }; host: any; course: { name: any; id: any }; attempt: { id: any } };
+    private questions: any[];
 
     constructor() {
         const page = new MultiSource(
@@ -45,13 +47,14 @@ class QuizPage {
         /** @type {Question[]} */
         this.questions = [];
 
-        for (const container of document.querySelectorAll("div.que")) {
+        document.querySelectorAll("div.que").forEach((container)=>{
             const question = TypeSelector.select(container);
 
             if (question) {
                 this.questions.push(question);
             }
-        }
+        });
+
     }
 
     serializeQuestions() {

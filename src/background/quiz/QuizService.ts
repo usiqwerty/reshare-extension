@@ -1,7 +1,9 @@
-import logger from "shared/debug/log";
+//import chrome from "browser-namespace/dist/commonjs/chrome-types";
+import logger from "../../shared/debug/log";
 //import browser from "webextension-polyfill";
 
 class QuizService {
+    moodleId: any;
 
     init(moodleId) {
         this.moodleId = moodleId;

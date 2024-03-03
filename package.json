@@ -27,6 +27,7 @@
     },
     "homepage": "https://github.com/usiqwerty/syncshare-extension#readme",
     "devDependencies": {
+        "@types/chrome": "^0.0.262",
         "clean-webpack-plugin": "^4.0.0-alpha.0",
         "copy-webpack-plugin": "^9.0.0",
         "cross-env": "^7.0.3",
@@ -41,7 +42,11 @@
     "dependencies": {
         "browser-namespace": "^1.4.0",
         "events": "^3.3.0",
+        "source-map-loader": "^5.0.0",
         "string-similarity": "^4.0.4",
+        "ts-loader": "^9.5.1",
+        "tsc": "^2.0.4",
+        "typescript": "^5.3.3",
         "web-ext": "^7.11.0",
         "webextension-polyfill": "^0.10.0"
     }

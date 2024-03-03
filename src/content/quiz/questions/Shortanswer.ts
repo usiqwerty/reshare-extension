@@ -1,7 +1,9 @@
-import Question from "content/quiz/questions/Question"
-import MagicButton from "shared/widgets/MagicButton";
+import Question from "../../../content/quiz/questions/Question"
+import MagicButton from "../../../shared/widgets/MagicButton";
 
 class Shortanswer extends Question {
+    questionType: string;
+    container: any;
 
     constructor(args) {
         super(args);

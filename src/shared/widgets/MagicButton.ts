@@ -1,6 +1,7 @@
-import Button from "shared/widgets/Button";
+import Button from "./Button";
 
 class MagicButton extends Button {
+    element: any;
 
     createElement() {
         const element = document.createElement("span");

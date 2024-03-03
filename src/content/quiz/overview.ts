@@ -1,8 +1,8 @@
-import Log from "shared/debug/log";
+import Log from "../../shared/debug/log";
 //import browser from "webextension-polyfill";
-import MultiSource from "shared/utils/MultiSource";
-import BreadcrumbSource from "content/quiz/sources/BreadcrumbSource";
-import URLSource from "content/quiz/sources/quiz/URLSource";
+import MultiSource from "../../shared/utils/MultiSource";
+import BreadcrumbSource from "./sources/BreadcrumbSource";
+import URLSource from "./sources/quiz/URLSource";
 
 const page = new MultiSource(
     new BreadcrumbSource(),
@@ -32,7 +32,7 @@ submitBtn.addEventListener("click", event => {
         const dialog = document.querySelector("div.confirmation-dialogue");
 
         if (!dialog) {
-            Log.error("OverviewPage: Failed to capture submit button");
+            Log.error(null, "OverviewPage: Failed to capture submit button");
             return;
         }
 
