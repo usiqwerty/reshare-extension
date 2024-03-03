@@ -22,10 +22,7 @@ class DataSource {
         throw new Error("DataSource: process() is not overriden");
     }
 
-    /**
-     * @param {String} key
-     */
-    get(key) {
+    get(key: string) {
         if (this.data[key] === undefined)
             return null;
 

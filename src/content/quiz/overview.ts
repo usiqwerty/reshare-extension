@@ -5,8 +5,8 @@ import BreadcrumbSource from "./sources/BreadcrumbSource";
 import URLSource from "./sources/quiz/URLSource";
 
 const page = new MultiSource(
-    new BreadcrumbSource(),
-    new URLSource()
+    [new BreadcrumbSource(),
+    new URLSource()]
 );
 
 const quizId = page.get("quizId");

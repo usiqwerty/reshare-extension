@@ -1,34 +1,23 @@
 import TypeSelector from "../../content/quiz/questions/TypeSelector";
 import Log from "../../shared/debug/log";
-//import browser from "webextension-polyfill";
 import MultiSource from "../../shared/utils/MultiSource";
 import BreadcrumbSource from "./sources/BreadcrumbSource";
 import LinkSource from "./sources/quiz/LinkSource";
 import URLSource from "./sources/quiz/URLSource";
+import Question from "./questions/Question";
 
 class QuizPage {
-    meta: { quiz: { name: any; id: any }; host: any; course: { name: any; id: any }; attempt: { id: any } };
+    meta: { quiz: { name: string; id: number }; host: string; course: { name: string; id: number }; attempt: { id: number } };
     private questions: any[];
 
     constructor() {
         const page = new MultiSource(
-            new BreadcrumbSource(),
+            [new BreadcrumbSource(),
             new LinkSource(),
-            new URLSource()
+            new URLSource()]
         );
 
-        /**
-         * @type     {Object}
-         * @property {String} host
-         * @property {Object} course
-         * @property {number} course.id
-         * @property {String} course.name
-         * @property {Object} quiz
-         * @property {number} quiz.id
-         * @property {String} quiz.name
-         * @property {Object} attempt
-         * @property {number} attempt.id
-         * */
+
         this.meta = {
             host: page.get("host"),
             course: {
@@ -44,8 +33,8 @@ class QuizPage {
             }
         }
 
-        /** @type {Question[]} */
-        this.questions = [];
+
+        this.questions = [] as Question[];
 
         document.querySelectorAll("div.que").forEach((container)=>{
             const question = TypeSelector.select(container);
@@ -149,9 +138,9 @@ class QuizPage {
 const quizPage = new QuizPage();
 
 // Check if page can be served
-const m = quizPage.meta;
+const pageMetadata = quizPage.meta;
 
-if (!m.quiz.id || !m.attempt.id) {
+if (!pageMetadata.quiz.id || !pageMetadata.attempt.id) {
     throw new Error("QuizPage: NotSupported: Missing required parameters");
 }
 
@@ -164,8 +153,8 @@ if (document.querySelector("#page-mod-quiz-review")) {
     chrome.runtime.sendMessage({ //browser
         type: "review-page-open",
         payload: {
-            quizId:    m.quiz.id,
-            attemptId: m.attempt.id,
+            quizId:    pageMetadata.quiz.id,
+            attemptId: pageMetadata.attempt.id,
         }
     });
 
@@ -181,8 +170,8 @@ else {
     chrome.runtime.sendMessage({ //browser
         type: "attempt-page-open",
         payload: {
-            quizId:    m.quiz.id,
-            attemptId: m.attempt.id,
+            quizId:    pageMetadata.quiz.id,
+            attemptId: pageMetadata.attempt.id,
         }
     });
 

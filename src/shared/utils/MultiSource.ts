@@ -1,33 +1,21 @@
-class MultiSource {
-    private sources: any[];
+import DataSource from "./DataSource";
 
-    /**
-    * @param {DataSource} sources
-    */
-    constructor(...sources) {
-        /** @type {DataSource[]} */
+class MultiSource {
+    private sources: DataSource[];
+
+    constructor(sources: DataSource[]) {
+
         this.sources = [];
 
         for (const source of sources)
-            this.add(source);
+            this.sources.push(source);
     }
 
-    /**
-    * @param {DataSource} source
-    */
-    add(source) {
-        this.sources.push(source);
-    }
-
-    /**
-     * @param {String} key
-     */
-    get(key) {
+    get(key: string) {
         for (const source of this.sources) {
             if (source.get(key) !== null)
                 return source.get(key);
         }
-
         return null;
     }
 }
