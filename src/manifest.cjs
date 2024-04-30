@@ -41,7 +41,12 @@ module.exports = ({ isChrome, isDevelopment, connectUrls = [], PACKAGE = {} } = 
                 default_title: "ReShare",
                 browser_style: true,
             }
-        }: {}),
+        }: {
+            browser_action: {
+                default_popup: "src/popup.html",
+                default_title: "ReShare",
+                browser_style: true,
+            }}),
         icons: {
             16: "icons/icon@16.png",
             24: "icons/icon@24.png",

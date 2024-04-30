@@ -47,7 +47,10 @@ module.exports = (env, argv) => {
                 patterns: [
                     { from: join(ROOT_PATH, "src/icons"), to: "icons" },
                     { from: join(ROOT_PATH, "src/styles"), to: "styles" },
-                    { from: join(ROOT_PATH, "src/_locales"), to: "_locales" }
+                    { from: join(ROOT_PATH, "src/_locales"), to: "_locales" },
+                    { from: join(ROOT_PATH, "src/KronaOne-Regular.ttf"), to: "src" },
+                    { from: join(ROOT_PATH, "src/LICENSE.txt"), to: "src" },
+                    { from: join(ROOT_PATH, "src/COPYRIGHT.txt"), to: "src" }
                 ]
             }),
             new webpack.DefinePlugin({

@@ -2,12 +2,22 @@ import ContextMenu from "../../../shared/widgets/ContextMenu";
 import {Anchor, Solution, Submenu, Submission, Suggestion, WidgetAnchor} from "../solver/types";
 import {calculateDelay} from "../solver/delayManager";
 import {getColor} from "../../../shared/utils/color";
-let autoclicker = true;
+let autoclicker = false;
+
+chrome.runtime.sendMessage({type:"autoclicker-status"});
+chrome.runtime.onMessage.addListener(req => { //browser
+    if (req?.type !== "status-set-autoclicker")
+        return;
+    // autoclicker = req.data
+    autoclicker = req.data;
+    console.log("ac status:", autoclicker);
+});
 
 chrome.runtime.onMessage.addListener(req => { //browser
     if (req?.type !== "fwd-set-autoclicker")
         return;
-    autoclicker = req.data
+    autoclicker = req.data;
+    alert("Автокликер "+ (autoclicker? "включён":"выключен")+". Перезагрузите страницу");
     console.log("current ac status:", autoclicker);
 });
 
@@ -79,7 +89,8 @@ class Question {
 
             this.parseSuggestions(solution.suggestions, anchor, menuOptions);
             this.parseSubmissions(solution.submissions, anchor, menuOptions);
-            this.clickAnswer(solution.submissions, anchor);
+            if (autoclicker)
+                this.clickAnswer(solution.submissions, anchor);
             const menu = new ContextMenu(menuOptions);
             menu.attach(anchor.button);
         });

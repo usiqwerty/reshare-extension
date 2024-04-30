@@ -1,7 +1,7 @@
 const checkbox = document.getElementById("autoclicker_check");
 
 chrome.storage.sync.get('autoclicker', function(data) {
-    console.log('DATA', data);
+    console.log('popup opened, current localstorage:', data);
     if (data){
         checkbox.checked = data.autoclicker;
     }
@@ -9,5 +9,5 @@ chrome.storage.sync.get('autoclicker', function(data) {
 
 checkbox.addEventListener("change", ()=>{
     chrome.runtime.sendMessage({type:"set-autoclicker", data:checkbox.checked});
-    //chrome.storage.sync.set({ autoclicker: checkbox.checked });
+    chrome.storage.sync.set({ autoclicker: checkbox.checked });
 });
