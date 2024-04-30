@@ -1,35 +1,40 @@
 import ContextMenu from "../../../shared/widgets/ContextMenu";
+import {Anchor, Solution, Submenu, Submission} from "../solver/types";
+import {calculateDelay} from "../solver/delayManager";
 //import browser from "webextension-polyfill";
 let autoclicker = true;
 
 chrome.runtime.onMessage.addListener(req => { //browser
     if (req?.type !== "fwd-set-autoclicker")
         return;
-    autoclicker=req.data
+    autoclicker = req.data
     console.log("current ac status:", autoclicker);
 });
 
-
-function complexity(submiss: Submission[]){
-    if (submiss.length===1)
-        return 0.1;
-
-    let counts = submiss.map((v)=>{return v.count});
-
-    counts.sort((a, b) => {return a - b});
-    counts.reverse();
-
-    const certainty = (counts[0]-counts[1])/counts[0];
-    return 1 - certainty;
-
+function submitTask() {
+    let a = document.getElementById("mod_quiz-next-nav");
+    let b = document.getElementsByClassName("mod_quiz-next-nav")[0] as HTMLElement;
+    setTimeout(() => {
+        // while (answered<totalAnswers){ (async ()=>await new Promise(f => setTimeout(f, 1000)))()}
+        if (a)
+            a.click();
+        if (b)
+            b.click();
+    }, 1000);
 }
-interface Submission {
-    correctness: number;
-    count: number;
-    label: string;
-    data: Object;
-    //item: SolutionItem;
+
+function pickBestSubmission(submissions: Submission[]): Submission {
+    let best = submissions[0];
+    submissions.forEach(submission=>{
+        if (submission.correctness > 0){
+            if (best.count< submission.count){
+                best=submission;
+            }
+        }
+    })
+    return best;
 }
+
 class Question {
     private qId: number;
     questionType: string;
@@ -55,62 +60,30 @@ class Question {
     // * @property {Object} data  Question-specific data required to perform autofill
     // */
 
-    /**
-    * @typedef Anchor
-    * @type {Object}
-    * @property {number} index
-     * @property {string} __type
-     * @property {string} anchor
-    */
-
-    /**
-    * @typedef  Suggestion Contains SyncShare assumptions about correctness of certain answer options 
-    * @type     {Object}
-    * @property {number}       correctness Whether specific answer is correct / partially correct / incorrect
-    * @property {number}       confidence  Confidence from 0 to 1 about specific assumption
-    * @property {string} label String representation of answer option
-    * @property {Object} data  Question-specific data required to perform autofill
-    */
     //@property {SolutionItem} item        More detailed information about specific answer option
 
 
     /**
-    * @typedef  Solution Contains data to display one magic wand and difine its menu
-    * @type     {Object}
-    * @property {Anchor}       anchor      Question-specific signature to anchor magic button to specific element
-    * @property {Suggestion[]} suggestions An array of suggestions
-    * @property {Submission[]} submissions An array of submissions
-    */
+     * @callback AutoFill
+     * @param    {Submenu} data Question-specific data required to perform autofill
+     */
 
     /**
-    * @callback AutoFill
-    * @param    {Submenu} data Question-specific data required to perform autofill
-    */
+     * @typedef  WidgetAnchor Contains magic button and function to perform autofill
+     * @type     {Object}
+     * @property {HTMLElement}  button  Magic button DOM node
+     * @property {AutoFill}     onClick Question-specific data required to perform autofill
+     */
 
-    /**
-    * @typedef  WidgetAnchor Contains magic button and function to perform autofill
-    * @type     {Object}
-    * @property {HTMLElement}  button  Magic button DOM node
-    * @property {AutoFill}     onClick Question-specific data required to perform autofill
-    */
 
-    /**
-     * @typedef Submenu
-     * @type {Object}
-     * @property {string} lable
-     * @property {any} data
-     * @property {any} icon
-     * @property {any} action
-     * @property {Submenu[]} subMenu
-     * */
 
     /**
      * Handles retrieved solutions from server by rendering
      * magic button and appropriate menu options
-     * 
+     *
      * @param {Solution[]} solutions An array of solutions
      */
-    handleSolutions(solutions) {
+    handleSolutions(solutions: Solution[]) {
         function getColor(correctness) {
 
             // Default correctness - unknown
@@ -119,24 +92,24 @@ class Question {
                 textColor: undefined
             }
 
-            switch(correctness) {
+            switch (correctness) {
                 // Incorrect
-                case 0: 
+                case 0:
                     color.backColor = "#FAA0A0"; // Red #b81414
                     color.textColor = "#FFFFFF"; // White
                     break;
 
                 // Partially correct
-                case 1: 
+                case 1:
                     color.backColor = "#FAC898"; // Orange #e66815
                     color.textColor = "#FFFFFF"; // White
                     break;
 
                 // Correct
-                case 2: 
+                case 2:
                     color.backColor = "#A9D099"; // Green #369c14
                     color.textColor = "#FFFFFF"; // White
-                    break; 
+                    break;
 
                 default:
                     color.backColor = "#cfcfc4"; // Gray
@@ -146,26 +119,29 @@ class Question {
 
             return color;
         }
+        let totalAnswers = solutions.length;
+        let answered = 0;
+        let totalWait = 0;
 
         solutions?.forEach(solution => {
-            /** @type Submenu[] */
-            const menuOptions = [];
+            const menuOptions: Submenu[] = [];
             const suggestions = solution.suggestions;
             const submissions = solution.submissions;
-            const anchor:any = this.createWidgetAnchor(solution.anchor);
+            const anchor: any = this.createWidgetAnchor(solution.anchor);
 
             if (!anchor)
                 return;
 
             if (suggestions?.length > 0) {
+                // totalAnswers++;
                 /** @type Submenu */
                 const suggMenu = {
                     label: chrome.i18n.getMessage("magicMenuSuggestions"), //browser
-                    icon: { name: "fa-star-o" },
+                    icon: {name: "fa-star-o"},
                     action: null,
+                    data: null,
                     subMenu: []
                 }
-
                 suggestions.forEach(suggestion => {
                     //const item = suggestion.item;
 
@@ -189,11 +165,13 @@ class Question {
                 /** @type Submenu */
                 const subsMenu = {
                     label: chrome.i18n.getMessage("magicMenuSubmissions"), //browser
-                    icon: { name: "fa-bar-chart" },
+                    icon: {name: "fa-bar-chart"},
                     action: null,
+                    data: null,
                     subMenu: []
                 }
 
+                let bestAnswer = pickBestSubmission(submissions);
                 submissions.forEach(submission => {
                     //const item = submission.item;
 
@@ -207,22 +185,20 @@ class Question {
                         },
                         action: () => anchor.onClick(submission.data)
                     });
-                    if (autoclicker && submission.correctness>0) {
-                        //
-                        const delay =  1000 + 30000 * complexity(submissions) + 10000 * Math.random();
+
+                    if (autoclicker && submission == bestAnswer) {
+                        const delay = calculateDelay(submissions);
+                        totalWait += delay;
                         setTimeout(() => {
                             anchor.onClick(submission.data);
-                        }, delay);
-
-                        // let a = document.getElementById("mod_quiz-next-nav");
-                        // let b = document.getElementsByClassName("mod_quiz-next-nav")[0];
-                        // setTimeout(() => {
-                        //     a.click();
-                        //     b.click();
-                        // }, 1000);
+                            answered++;
+                            if (answered == totalAnswers) {
+                                submitTask();
+                            }
+                        }, totalWait);
                     }
-                    chrome.storage.sync.get('autoclicker', function(data) {
-                        if (data){
+                    chrome.storage.sync.get('autoclicker', function (data) {
+                        if (data) {
                             autoclicker = data.autoclicker;
                         }
                     });
@@ -232,7 +208,6 @@ class Question {
 
                 menuOptions.push(subsMenu);
             }
-
             const menu = new ContextMenu(menuOptions);
             menu.attach(anchor.button);
         });
@@ -242,11 +217,11 @@ class Question {
 
     /**
      * Creates magic button and defines function to autofill answer
-     * 
+     *
      * @param   {Anchor} anchor Question-specific signature to anchor magic button to specific element
      * @returns {WidgetAnchor}  Anchor containing created magic button and autofill function
      */
-    createWidgetAnchor(anchor) {
+    createWidgetAnchor(anchor: Anchor) {
         throw `${this.name}: createWidgetAnchor must be overridden!`;
     }
 
