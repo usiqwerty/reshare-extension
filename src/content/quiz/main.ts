@@ -8,7 +8,7 @@ import Question from "./questions/Question";
 
 class QuizPage {
     meta: { quiz: { name: string; id: number }; host: string; course: { name: string; id: number }; attempt: { id: number } };
-    private questions: any[];
+    private readonly questions: Question[];
 
     constructor() {
         const page = new MultiSource(
@@ -34,9 +34,9 @@ class QuizPage {
         }
 
 
-        this.questions = [] as Question[];
+        this.questions = [];
 
-        document.querySelectorAll("div.que").forEach((container)=>{
+        document.querySelectorAll("div.que").forEach((container: HTMLDivElement)=>{
             const question = TypeSelector.select(container);
 
             if (question) {
@@ -102,7 +102,7 @@ class QuizPage {
             sending.catch(e => Log.error(e, "Error during solution request", body))
         }
         
-        window.addEventListener("beforeunload", e => {
+        window.addEventListener("beforeunload", () => {
             chrome.runtime.sendMessage({ //browser
                 type: "quiz-attempt-data",
                 payload: {

@@ -11,7 +11,7 @@ class TypeSelector {
      * 
      * @param {HTMLDivElement} container Question div container
      */
-    select(container) {
+    select(container: HTMLDivElement) {
         switch (container.classList[1]) {
             case "match": 
                 return new Match({container});

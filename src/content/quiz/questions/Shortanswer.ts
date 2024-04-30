@@ -1,5 +1,6 @@
 import Question from "../../../content/quiz/questions/Question"
 import MagicButton from "../../../shared/widgets/MagicButton";
+import {WidgetAnchor} from "../solver/types";
 
 class Shortanswer extends Question {
     questionType: string;
@@ -7,9 +8,10 @@ class Shortanswer extends Question {
 
     constructor(args) {
         super(args);
-        this.questionType="shortanswer";
+        this.questionType = "shortanswer";
     }
-    createWidgetAnchor(anchor) {
+
+    createWidgetAnchor(anchor): WidgetAnchor {
 
         const input = this.container.querySelector("span.answer > input");
 
@@ -21,7 +23,8 @@ class Shortanswer extends Question {
             console.log("data:", data);
         }
 
-        return { onClick, button };
+        // @ts-ignore
+        return {onClick, button};
     }
 }
 

@@ -12,7 +12,7 @@ export interface Submission {
     //item: SolutionItem;
 }
 
-interface Suggestion {
+export interface Suggestion {
     correctness: number;
     confidence: number;
     label: string;
@@ -32,3 +32,19 @@ export interface Submenu {
     action: any;
     subMenu: Submenu[];
 }
+
+type AutoFill = (data: Submenu)=> any;
+export interface WidgetAnchor {
+    button: HTMLElement;
+    onClick: AutoFill;
+}
+// /**
+// * @typedef  SolutionItem Represents single menu option (or answer option)
+// * @type     {Object}
+// * @property {string} label String representation of answer option
+// * @property {Object} data  Question-specific data required to perform autofill
+// */
+
+//@property {SolutionItem} item        More detailed information about specific answer option
+
+
