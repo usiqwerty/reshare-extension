@@ -9,8 +9,8 @@ chrome.runtime.onMessage.addListener(req => { //browser
     console.log("current ac status:", autoclicker);
 });
 
-/** @param {Submission[]} submiss*/
-function complexity(submiss){
+
+function complexity(submiss: Submission[]){
     if (submiss.length===1)
         return 0.1;
 
@@ -22,6 +22,13 @@ function complexity(submiss){
     const certainty = (counts[0]-counts[1])/counts[0];
     return 1 - certainty;
 
+}
+interface Submission {
+    correctness: number;
+    count: number;
+    label: string;
+    data: Object;
+    //item: SolutionItem;
 }
 class Question {
     private qId: number;
@@ -65,15 +72,7 @@ class Question {
     * @property {Object} data  Question-specific data required to perform autofill
     */
     //@property {SolutionItem} item        More detailed information about specific answer option
-    /**
-    * @typedef  Submission Contains data about other users submissions
-    * @type     {Object}
-    * @property {number}       correctness Whether specific answer is correct / partially correct / incorrect
-    * @property {number}       count       How many times other users have chosen specific answer
-    * @property {string} label String representation of answer option
-    * @property {Object} data  Question-specific data required to perform autofill
-    //* @property {SolutionItem} item        More detailed information about specific answer option
-    */
+
 
     /**
     * @typedef  Solution Contains data to display one magic wand and difine its menu
