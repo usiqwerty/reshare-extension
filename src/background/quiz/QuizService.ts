@@ -1,33 +1,48 @@
-//import chrome from "browser-namespace/dist/commonjs/chrome-types";
 import logger from "../../shared/debug/log";
-//import browser from "webextension-polyfill";
+
+const api_server = "syncshare.naloaty.me";
 
 class QuizService {
-    moodleId: any;
+    autoclicker: boolean;
 
-    init(moodleId) {
-        this.moodleId = moodleId;
-        chrome.runtime.onMessage.addListener(data => { //browser
+    init() {
+        chrome.runtime.onMessage.addListener(data => {
             if (data?.type !== "quiz-review-data")
                 return;
-
             this.onReviewData(data.payload)
         });
 
-        chrome.runtime.onMessage.addListener(data => { //browser
+        chrome.runtime.onMessage.addListener(data => {
             if (data?.type !== "quiz-attempt-data")
                 return;
-
             this.onAttemptData(data.payload);
         });
 
-        chrome.runtime.onMessage.addListener((data, sender, sendResponse) => { //browser
-
-            if (data?.type !== "solution-request")
-                return true;
-            //console.log("sol req listener:", data, sender, sendResponse);
-            this.onSolutionRequest(data.payload, sendResponse);
+        chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
+            if (data?.type === "solution-request")
+                this.onSolutionRequest(data.payload, sendResponse);
             return true;
+        });
+
+        chrome.storage.local.get(d => {
+                const r = d.autoclicker;
+                console.log("Initial ac set:", r);
+                if (r)
+                    this.autoclicker = r;
+                else {
+                    console.log("AC was not set, so saving default value");
+                    this.autoclicker = false;
+                    chrome.storage.local.set({autoclicker: false});
+                }
+            }
+        );
+
+        chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
+            console.log("AC request:", data, this.autoclicker);
+            if (data?.type === "get-ac-status")
+                sendResponse(this.autoclicker);
+            else if (data?.type === "set-ac-status")
+                this.autoclicker = data.data;
         });
 
         logger.info("QuizService: initialized");
@@ -44,8 +59,6 @@ class QuizService {
 
     onSolutionRequest(body, sendResponse) {
         console.log("Solution request received", body);
-        //
-        //console.log("the doc:", document);
 
         const question = {
 
@@ -60,24 +73,13 @@ class QuizService {
         };
         console.log('got a q: ', question);
 
-        //let xhr = new XMLHttpRequest();
 
-        const api_url= "https://syncshare.naloaty.me/api/v2/";
-        //quiz/solution?
-        // host=exam1.urfu.ru
-        // &courseId=857
-        // &quizId=13650
-        // &attemptId=3686611
-        // &moodleId=455433
-        // &questionId=17291537
-        // &questionType=multianswer
-        // &client=1.1.6
+        const api_url = "https://" + api_server + "/api/v2/";
 
-        //"http://127.0.0.1:8000/api/get_solution"; //"https://usiqwerty.pythonanywhere.com/api/get_solution"; //
         let request_url = api_url + "quiz/solution?" + new URLSearchParams(question).toString();
         fetch(request_url).then(r => r.text()).then(result => {
             let result_obj = JSON.parse(result);
-            sendResponse(result_obj);//alert(result);
+            sendResponse(result_obj);
             console.log("Response sent");
         })
 

@@ -1,13 +1,8 @@
 const checkbox = document.getElementById("autoclicker_check");
 
-chrome.storage.sync.get('autoclicker', function(data) {
-    console.log('popup opened, current localstorage:', data);
-    if (data){
-        checkbox.checked = data.autoclicker;
-    }
-});
+chrome.runtime.sendMessage({type: "get-ac-status"}, (r => checkbox.checked = r));
 
-checkbox.addEventListener("change", ()=>{
-    chrome.runtime.sendMessage({type:"set-autoclicker", data:checkbox.checked});
-    chrome.storage.sync.set({ autoclicker: checkbox.checked });
+checkbox.addEventListener("change", () => {
+    chrome.runtime.sendMessage({type: "set-ac-status", data: checkbox.checked});
+    chrome.storage.local.set({autoclicker: checkbox.checked});
 });

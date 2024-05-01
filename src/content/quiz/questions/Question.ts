@@ -2,24 +2,7 @@ import ContextMenu from "../../../shared/widgets/ContextMenu";
 import {Anchor, Solution, Submenu, Submission, Suggestion, WidgetAnchor} from "../solver/types";
 import {calculateDelay} from "../solver/delayManager";
 import {getColor} from "../../../shared/utils/color";
-let autoclicker = false;
-
-chrome.runtime.sendMessage({type:"autoclicker-status"});
-chrome.runtime.onMessage.addListener(req => { //browser
-    if (req?.type !== "status-set-autoclicker")
-        return;
-    // autoclicker = req.data
-    autoclicker = req.data;
-    console.log("ac status:", autoclicker);
-});
-
-chrome.runtime.onMessage.addListener(req => { //browser
-    if (req?.type !== "fwd-set-autoclicker")
-        return;
-    autoclicker = req.data;
-    alert("Автокликер "+ (autoclicker? "включён":"выключен")+". Перезагрузите страницу");
-    console.log("current ac status:", autoclicker);
-});
+// let autoclicker = false;
 
 
 function pickBestSubmission(submissions: Submission[]): Submission {
@@ -42,6 +25,8 @@ class Question {
     private totalWait: number;
     private totalAnswers: number;
     private answered: number;
+    private solutions: Solution[];
+    widgetAnchors: WidgetAnchor[];
 
     constructor({container}) {
 
@@ -49,11 +34,10 @@ class Question {
         const url = new URL("a://a/a?" + postData);
 
         this.qId = parseInt(url.searchParams.get("qid"));
-        //this.questionType="unspecified";
 
         this.container = container;
-
     }
+
     trySubmitTask() {
         this.answered++;
         if (this.answered == this.totalAnswers) {
@@ -76,28 +60,29 @@ class Question {
      * @param {Solution[]} solutions An array of solutions
      */
     handleSolutions(solutions: Solution[]) {
-
+        console.log("Handling "+solutions.length+" questions");
         this.totalAnswers = solutions.length;
         this.answered = 0;
         this.totalWait = 0;
+        this.solutions = [];
+        this.widgetAnchors = [];
 
         solutions?.forEach(solution => {
             const menuOptions: Submenu[] = [];
             const anchor = this.createWidgetAnchor(solution.anchor);
             // if (!anchor)
             //     return;
-
             this.parseSuggestions(solution.suggestions, anchor, menuOptions);
             this.parseSubmissions(solution.submissions, anchor, menuOptions);
-            if (autoclicker)
-                this.clickAnswer(solution.submissions, anchor);
+            this.solutions.push(solution);
+            this.widgetAnchors.push(anchor);
             const menu = new ContextMenu(menuOptions);
             menu.attach(anchor.button);
         });
 
 
     }
-    private clickAnswer(submissions: Submission[], anchor: any){
+    clickAnswer(submissions: Submission[], anchor: any){
         const best = pickBestSubmission(submissions);
         const delay = calculateDelay(submissions);
         this.totalWait += delay;
@@ -106,11 +91,7 @@ class Question {
             this.trySubmitTask();
         }, this.totalWait);
 
-        chrome.storage.sync.get('autoclicker', function (data) {
-            if (data) {
-                autoclicker = data.autoclicker;
-            }
-        });
+
     }
     private parseSubmissions(submissions: Submission[], anchor: any, menuOptions: Submenu[]) {
         if (submissions?.length > 0) {
