@@ -1,7 +1,8 @@
 # ReShare v1.2
 Форк SyncShare с открытым кодом
 
-[Исходный репозиторий](https://github.com/F1Soda/syncshare-extension), [Сайт SyncShare](https://syncshare.naloaty.me/)
+[Исходный репозиторий](https://github.com/naloaty/syncshare-extension),
+[Сайт SyncShare](https://syncshare.naloaty.me/)
 ## Преимущества
 1. **Автокликер**
 2. Умная задержка между нажатиями на ответы
