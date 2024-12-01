@@ -40,12 +40,11 @@ class Match extends Question {
     }
 
     createWidgetAnchor(anchor: Anchor): WidgetAnchor {
-        const anchor_string = anchor.anchor;
-        let select = this.labels[anchor_string];//.sign
+        let select = this.labels[anchor.anchor];//.sign
         // Try to find similar nodes in case 
         // the text of the question has changed
         if (!select) {
-            const candidate = Strings.findSimilar(anchor_string, Object.keys(this.labels));//.sign
+            const candidate = Strings.findSimilar(anchor.anchor, Object.keys(this.labels));//.sign
 
             if (!candidate) {
                 return;
@@ -57,8 +56,8 @@ class Match extends Question {
         const button = new MagicButton().element;
         select.parentNode.appendChild(button);
 
-        const onClick = data => {
-            let option = this.options[data];//.sign
+        const onClick = (data: string) => {
+            let option = this.options[data];
 
             // Try to find similar options in case 
             // the text of the question has changed

@@ -33,7 +33,7 @@ export interface Submenu {
     subMenu: Submenu[];
 }
 
-type AutoFill = (data: Submenu)=> any;
+type AutoFill = (data: string) => any;
 export interface WidgetAnchor {
     button: HTMLElement;
     onClick: AutoFill;

@@ -11,7 +11,7 @@ class Multichoice extends Question {
     questionType: string;
     private answer: any;
 
-    constructor(args) {
+    constructor(args: { container: HTMLDivElement; }) {
         super(args);
 
         const answer = this.container.querySelector("div.answer");
@@ -46,7 +46,7 @@ class Multichoice extends Question {
                 // Try to find similar node in case 
                 // the text of the question has changed
                 if (!choice) {
-                    const candidate = Strings.findSimilar(data.sign[0], Object.keys(this.options)); //
+                    const candidate = Strings.findSimilar(data.sign[0], Object.keys(this.options));
 
                     if (!candidate) {
                         return;
@@ -61,7 +61,7 @@ class Multichoice extends Question {
             return { onClick, button };
         }
         else if (this.type === "checkbox") {
-            let choice = this.options[anchor.anchor]; //.sign
+            let choice = this.options[anchor.anchor];
             // Try to find similar nodes in case 
             // the text of the question has changed
             console.log("options:",this.options);

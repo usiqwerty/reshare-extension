@@ -2,6 +2,7 @@ import Question from "../../../content/quiz/questions/Question";
 import * as Images from "../../../shared/utils/images";
 import * as Strings from "../../../shared/utils/strings";
 import MagicButton from "../../../shared/widgets/MagicButton";
+import { Anchor } from "../solver/types";
 
 class Multianswer extends Question {
     questionType: string;
@@ -14,19 +15,19 @@ class Multianswer extends Question {
         super(args);
 
         this.questionType = "multianswer";
-        const edits        = this.container.querySelectorAll("span.subquestion > input");
-        const selects      = this.container.querySelectorAll("span.subquestion > select");
+        const edits = this.container.querySelectorAll("span.subquestion > input");
+        const selects = this.container.querySelectorAll("span.subquestion > select");
         const multichoices = this.container.querySelectorAll("div.answer, table.answer, fieldset.answer");
 
-        const getSlot = node => node.name.match(/sub(\d+)/)[1];
+        const getSlot = (node: { name: string }) => node.name.match(/sub(\d+)/)[1];
 
-        this.edit        = {};
-        this.select      = {};
-        this.multichoice = {};    
+        this.edit = {};
+        this.select = {};
+        this.multichoice = {};
 
         /* Shortanswer & numerical subquestion type */
         for (const input of edits) {
-            this.edit[getSlot(input)] = { input };
+            this.edit[getSlot(input)] = {input};
         }
 
         /* Multichoice subquestion type */
@@ -45,8 +46,8 @@ class Multianswer extends Question {
                 const sign = [
                     Strings.removeInvisible(label.lastChild.textContent) || "[NO TEXT]",
                     Images.serializeArray(label.querySelectorAll("img"))
-                ];                  
-    
+                ];
+
                 subQ.options[sign.join(";")] = input;
             }
 
@@ -71,15 +72,14 @@ class Multianswer extends Question {
         }
     }
 
-    createWidgetAnchor(anchor) {
+    createWidgetAnchor(anchor: Anchor) {
         let subq = null;
         if ((subq = this.select[anchor.index])) {
 
             const button = new MagicButton().element;
             subq.node.parentNode.appendChild(button);
 
-            /** @param {string} data */
-            const onClick = (data) => {
+            const onClick = (data: string) => {
                 let option = subq.optionMap[data];
 
                 // Try to find similar options in case 
