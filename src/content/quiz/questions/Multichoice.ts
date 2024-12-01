@@ -2,6 +2,7 @@ import Question from "../../../content/quiz/questions/Question"
 import * as Strings from "../../../shared/utils/strings"
 import * as Images from "../../../shared/utils/images"
 import MagicButton from "../../../shared/widgets/MagicButton"
+import {Anchor} from "../solver/types";
 
 class Multichoice extends Question {
     container: any;
@@ -32,9 +33,8 @@ class Multichoice extends Question {
             this.options[sign.join(";")] = input;
         }
     }
-    /** @param {string[]} anchor_list*/
-    createWidgetAnchor(anchor_list) {
-        const anchor=anchor_list[0]
+
+    createWidgetAnchor(anchor: Anchor) {
         if (this.type === "radio") {
             const button = new MagicButton().element;
             this.answer.appendChild(button);
@@ -61,16 +61,16 @@ class Multichoice extends Question {
             return { onClick, button };
         }
         else if (this.type === "checkbox") {
-            let choice = this.options[anchor]; //.sign
+            let choice = this.options[anchor.anchor]; //.sign
             // Try to find similar nodes in case 
             // the text of the question has changed
             console.log("options:",this.options);
-            console.log("anchor:", anchor);
+            console.log("anchor_string:", anchor.anchor);
             if (!choice) {
-                const candidate = Strings.findSimilar(anchor, Object.keys(this.options)); //.sign
+                const candidate = Strings.findSimilar(anchor.anchor, Object.keys(this.options)); //.sign
 
                 if (!candidate) {
-                    console.log("Could not find such answer:", anchor);
+                    console.log("Could not find such answer:", anchor.anchor);
                     return;
                 }
 

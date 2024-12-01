@@ -28,13 +28,10 @@ class Question {
     private solutions: Solution[];
     widgetAnchors: WidgetAnchor[];
 
-    constructor({container}) {
-
-        const postData = container.querySelector("input.questionflagpostdata").value;
+    constructor({container}: {container: HTMLDivElement}) {
+        const postData = (container.querySelector("input.questionflagpostdata") as HTMLInputElement).value;
         const url = new URL("a://a/a?" + postData);
-
         this.qId = parseInt(url.searchParams.get("qid"));
-
         this.container = container;
     }
 
@@ -69,6 +66,11 @@ class Question {
 
         solutions?.forEach(solution => {
             const menuOptions: Submenu[] = [];
+            if (this.questionType === "match")
+                solution.anchor = { anchor: solution.anchor[0]} as Anchor;
+            if (this.questionType === "multichoice")
+                solution.anchor = { anchor: solution.anchor[0]} as Anchor;
+
             const anchor = this.createWidgetAnchor(solution.anchor);
             // if (!anchor)
             //     return;
@@ -130,8 +132,6 @@ class Question {
                 subMenu: []
             }
             suggestions.forEach(suggestion => {
-                //const item = suggestion.item;
-
                 suggMenu.subMenu.push({
                     label: suggestion.label,
                     data: suggestion.data,
@@ -149,7 +149,7 @@ class Question {
         }
     }
 
-    createWidgetAnchor(anchor: Anchor | string[]): WidgetAnchor {
+    createWidgetAnchor(anchor: Anchor): WidgetAnchor {
         /**
          * Creates magic button and defines function to autofill answer
          *

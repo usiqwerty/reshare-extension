@@ -2,7 +2,7 @@ import Question from "../../../content/quiz/questions/Question";
 import * as Images from "../../../shared/utils/images";
 import * as Strings from "../../../shared/utils/strings";
 import MagicButton from "../../../shared/widgets/MagicButton";
-import {WidgetAnchor} from "../solver/types";
+import {Anchor, WidgetAnchor} from "../solver/types";
 
 class Match extends Question {
     labels: {};
@@ -10,7 +10,7 @@ class Match extends Question {
     container: any;
     questionType: string;
 
-    constructor(args) {
+    constructor(args: { container: HTMLDivElement }) {
         super(args);
 
         const table = this.container.querySelector("table.answer");
@@ -39,13 +39,13 @@ class Match extends Question {
         }
     }
 
-    createWidgetAnchor(anchor_list: string[]): WidgetAnchor {
-        const anchor = anchor_list[0];
-        let select = this.labels[anchor];//.sign
+    createWidgetAnchor(anchor: Anchor): WidgetAnchor {
+        const anchor_string = anchor.anchor;
+        let select = this.labels[anchor_string];//.sign
         // Try to find similar nodes in case 
         // the text of the question has changed
         if (!select) {
-            const candidate = Strings.findSimilar(anchor, Object.keys(this.labels));//.sign
+            const candidate = Strings.findSimilar(anchor_string, Object.keys(this.labels));//.sign
 
             if (!candidate) {
                 return;
