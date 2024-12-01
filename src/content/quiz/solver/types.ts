@@ -38,6 +38,11 @@ export interface WidgetAnchor {
     button: HTMLElement;
     onClick: AutoFill;
 }
+export interface MultichoiceSubquestion {
+    options: {[key: string]: HTMLInputElement},
+    answer: HTMLDivElement |HTMLTableElement|HTMLFieldSetElement,
+    type: string,
+}
 // /**
 // * @typedef  SolutionItem Represents single menu option (or answer option)
 // * @type     {Object}

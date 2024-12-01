@@ -2,21 +2,110 @@ import Question from "../../../content/quiz/questions/Question";
 import * as Images from "../../../shared/utils/images";
 import * as Strings from "../../../shared/utils/strings";
 import MagicButton from "../../../shared/widgets/MagicButton";
-import { Anchor } from "../solver/types";
+import {Anchor, MultichoiceSubquestion} from "../solver/types";
+
+function createShortanswerAnchor(subq: {input: HTMLInputElement}) {
+    const button = new MagicButton().element;
+    subq.input.parentNode.appendChild(button);
+
+    const onClick = (data: string) => {
+        subq.input.value = data;
+    }
+
+    return {onClick, button};
+}
+
+function createMultichoiceAnchor(subq: MultichoiceSubquestion, anchor: Anchor) {
+    if ("radio" === subq.type) {
+
+        const button = new MagicButton().element;
+        subq.answer.appendChild(button);
+
+
+        const onClick = (data) => {
+            const ans_anchor = data.anchor[0];
+            let choice = subq.options[ans_anchor];
+
+            // Try to find similar nodes in case
+            // the text of the question has changed
+            if (!choice) {
+                const candidate = Strings.findSimilar(ans_anchor, Object.keys(subq.options));
+
+                if (!candidate) {
+                    return;
+                }
+
+                choice = subq.options[candidate];
+            }
+
+            choice.checked = true;
+        }
+
+        return {onClick, button};
+    }
+
+    if ("checkbox" === subq.type) {
+        let choice = subq.options[anchor.index];
+
+        // Try to find similar nodes in case
+        // the text of the question has changed
+        if (!choice) {
+            const candiate = Strings.findSimilar(anchor.index, Object.keys(subq.options));
+
+            // if (!candiate) {
+            //     return;
+            // }
+
+            choice = subq.options[candiate];
+        }
+
+        const button = new MagicButton().element;
+        choice.parentNode.insertBefore(button, choice.nextSibling);
+        /** @param {boolean} data */
+        const onClick = data => choice.checked = data;
+
+        return {onClick, button};
+    }
+}
+
+function createSelectAnchor(subq) {
+    const button = new MagicButton().element;
+    subq.node.parentNode.appendChild(button);
+
+    const onClick = (data: string) => {
+        let option = subq.optionMap[data];
+
+        // Try to find similar options in case
+        // the text of the question has changed
+        if (!option) {
+            const candidate = Strings.findSimilar(data, Object.keys(subq.optionMap));
+
+            if (!candidate) {
+                return;
+            }
+
+            option = subq.optionMap[candidate];
+        }
+
+        subq.node.value = option;
+    }
+
+    return {onClick, button};
+}
 
 class Multianswer extends Question {
     questionType: string;
     container: any;
-    private multichoice: {};
-    private edit: {};
+    private multichoice: {[key: string]: MultichoiceSubquestion};
+    private edit:  {[key: string]: { input: HTMLInputElement }};
     private select: {};
 
-    constructor(args) {
+    constructor(args: { container: HTMLDivElement; }) {
         super(args);
 
         this.questionType = "multianswer";
-        const edits = this.container.querySelectorAll("span.subquestion > input");
-        const selects = this.container.querySelectorAll("span.subquestion > select");
+        const edits = this.container.querySelectorAll("span.subquestion > input") as HTMLInputElement[];
+        const selects = this.container.querySelectorAll("span.subquestion > select");// as HTMLSelectElement[]
         const multichoices = this.container.querySelectorAll("div.answer, table.answer, fieldset.answer");
 
         const getSlot = (node: { name: string }) => node.name.match(/sub(\d+)/)[1];
@@ -38,7 +127,7 @@ class Multianswer extends Question {
                 options: {},
                 answer: mc,
                 type: inputs[0].type,
-            }
+            } as MultichoiceSubquestion;
 
             for (const input of inputs) {
                 const label = input.nextSibling;
@@ -75,94 +164,14 @@ class Multianswer extends Question {
     createWidgetAnchor(anchor: Anchor) {
         let subq = null;
         if ((subq = this.select[anchor.index])) {
-
-            const button = new MagicButton().element;
-            subq.node.parentNode.appendChild(button);
-
-            const onClick = (data: string) => {
-                let option = subq.optionMap[data];
-
-                // Try to find similar options in case 
-                // the text of the question has changed
-                if (!option) {
-                    const candidate = Strings.findSimilar(data, Object.keys(subq.optionMap));
-    
-                    if (!candidate) {
-                        return;
-                    }
-    
-                    option = subq.optionMap[candidate];
-                }
-
-                subq.node.value = option;
-            }
-
-            return { onClick, button };
+            return createSelectAnchor(subq);
         }
         else if ((subq = this.multichoice[anchor.index])) {
-
-            if ("radio" === subq.type) {
-
-                const button = new MagicButton().element;
-                subq.answer.appendChild(button);
-
-
-                const onClick = (data) => {
-                    const ans_anchor = data.anchor[0];
-                    let choice = subq.options[ans_anchor];
-
-                    // Try to find similar nodes in case 
-                    // the text of the question has changed
-                    if (!choice) {
-                        const candidate = Strings.findSimilar(ans_anchor, Object.keys(subq.options));
-
-                        if (!candidate) {
-                            return;
-                        }
-
-                        choice = subq.options[candidate];
-                    }
-    
-                    choice.checked = true;
-                }
-
-                return { onClick, button };
-            }
-            
-            if ("checkbox" === subq.type) {
-                let choice = subq.options[anchor.index];
-
-                // Try to find similar nodes in case 
-                // the text of the question has changed
-                if (!choice) {
-                    const candiate = Strings.findSimilar(anchor.index, Object.keys(subq.options));
-
-                    // if (!candiate) {
-                    //     return;
-                    // }
-
-                    choice = subq.options[candiate];
-                }
-    
-                const button = new MagicButton().element;
-                choice.parentNode.insertBefore(button, choice.nextSibling);
-                /** @param {boolean} data */
-                const onClick = data => choice.checked = data;
-    
-                return { onClick, button };
-            }
+            return createMultichoiceAnchor(subq, anchor);
 
         }
         else if ((subq = this.edit[anchor.index])) {
-            const button = new MagicButton().element;
-            subq.input.parentNode.appendChild(button);
-
-            /** @param {string} data */
-            const onClick = (data) => {
-                subq.input.value = data;
-            }
-
-            return { onClick, button };
+            return createShortanswerAnchor(subq);
         }
     }
 }
