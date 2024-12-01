@@ -40,8 +40,7 @@ class ContextMenu extends EventEmitter {
         document.addEventListener("click", e => {
             // @ts-ignore
             const buttonId = parseInt(e.target.getAttribute("ctx-menu"));
-
-            if (buttonId === this.menuId) {
+            if (buttonId === this.menuId || isNaN(buttonId) ) {
                 return;
             }
 
@@ -198,7 +197,7 @@ class ContextMenu extends EventEmitter {
     }
 
     attach(button) {
-        button.setAttribute("ctx-menu", this.menuId);
+        button.setAttribute("ctx-menu", String(this.menuId));
         button.addEventListener("click", e => {
             this.show(e.clientX, e.clientY);
         });

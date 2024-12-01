@@ -15,12 +15,11 @@ class Shortanswer extends Question {
 
         const input = this.container.querySelector("span.answer > input");
 
-        const button = new MagicButton();
-        input.parentNode.appendChild(button.element);
+        const button = new MagicButton().element;
+        input.parentNode.appendChild(button);
 
-        const onClick = (data) => {
-            input.value = data.text;
-            console.log("data:", data);
+        const onClick = (data: string) => {
+            input.value = data;
         }
 
         // @ts-ignore
