@@ -3,17 +3,18 @@ import * as Images from "../../../shared/utils/images";
 import * as Strings from "../../../shared/utils/strings";
 import MagicButton from "../../../shared/widgets/MagicButton";
 import {Anchor, MultichoiceSubquestion} from "../solver/types";
+import {createShortanswerAnchor} from "./Shortanswer";
 
-function createShortanswerAnchor(subq: {input: HTMLInputElement}) {
-    const button = new MagicButton().element;
-    subq.input.parentNode.appendChild(button);
-
-    const onClick = (data: string) => {
-        subq.input.value = data;
-    }
-
-    return {onClick, button};
-}
+// function createShortanswerAnchor(subq: {input: HTMLInputElement}) {
+//     const button = new MagicButton().element;
+//     subq.input.parentNode.appendChild(button);
+//
+//     const onClick = (data: string) => {
+//         subq.input.value = data;
+//     }
+//
+//     return {onClick, button};
+// }
 
 function createMultichoiceAnchor(subq: MultichoiceSubquestion, anchor: Anchor) {
     if ("radio" === subq.type) {
@@ -171,7 +172,7 @@ class Multianswer extends Question {
 
         }
         else if ((subq = this.edit[anchor.index])) {
-            return createShortanswerAnchor(subq);
+            return createShortanswerAnchor(anchor, subq.input);
         }
     }
 }
