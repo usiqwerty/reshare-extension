@@ -4,70 +4,7 @@ import * as Strings from "../../../shared/utils/strings";
 import MagicButton from "../../../shared/widgets/MagicButton";
 import {Anchor, MultichoiceSubquestion} from "../solver/types";
 import {createShortanswerAnchor} from "./Shortanswer";
-
-// function createShortanswerAnchor(subq: {input: HTMLInputElement}) {
-//     const button = new MagicButton().element;
-//     subq.input.parentNode.appendChild(button);
-//
-//     const onClick = (data: string) => {
-//         subq.input.value = data;
-//     }
-//
-//     return {onClick, button};
-// }
-
-function createMultichoiceAnchor(subq: MultichoiceSubquestion, anchor: Anchor) {
-    if ("radio" === subq.type) {
-
-        const button = new MagicButton().element;
-        subq.answer.appendChild(button);
-
-
-        const onClick = (data) => {
-            const ans_anchor = data.anchor[0];
-            let choice = subq.options[ans_anchor];
-
-            // Try to find similar nodes in case
-            // the text of the question has changed
-            if (!choice) {
-                const candidate = Strings.findSimilar(ans_anchor, Object.keys(subq.options));
-
-                if (!candidate) {
-                    return;
-                }
-
-                choice = subq.options[candidate];
-            }
-
-            choice.checked = true;
-        }
-
-        return {onClick, button};
-    }
-
-    if ("checkbox" === subq.type) {
-        let choice = subq.options[anchor.index];
-
-        // Try to find similar nodes in case
-        // the text of the question has changed
-        if (!choice) {
-            const candiate = Strings.findSimilar(anchor.index, Object.keys(subq.options));
-
-            // if (!candiate) {
-            //     return;
-            // }
-
-            choice = subq.options[candiate];
-        }
-
-        const button = new MagicButton().element;
-        choice.parentNode.insertBefore(button, choice.nextSibling);
-        /** @param {boolean} data */
-        const onClick = data => choice.checked = data;
-
-        return {onClick, button};
-    }
-}
+import {createMultichoiceCheckboxAnchor, createMultichoiceRadioAnchor} from "./Multichoice";
 
 function createSelectAnchor(subq) {
     const button = new MagicButton().element;
@@ -168,8 +105,11 @@ class Multianswer extends Question {
             return createSelectAnchor(subq);
         }
         else if ((subq = this.multichoice[anchor.index])) {
-            return createMultichoiceAnchor(subq, anchor);
-
+            if (subq.type == "radio")
+                return createMultichoiceRadioAnchor(anchor, subq.answer, subq.options);
+            else if (subq.type == "checkbox")
+                return createMultichoiceCheckboxAnchor(anchor, subq.answer, subq.options);
+            return null;
         }
         else if ((subq = this.edit[anchor.index])) {
             return createShortanswerAnchor(anchor, subq.input);

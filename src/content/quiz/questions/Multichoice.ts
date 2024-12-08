@@ -4,7 +4,7 @@ import * as Images from "../../../shared/utils/images"
 import MagicButton from "../../../shared/widgets/MagicButton"
 import {Anchor} from "../solver/types";
 
-function createMultichoiceRadioAnchor(anchor: Anchor, tag: HTMLDivElement, options: {
+export function createMultichoiceRadioAnchor(anchor: Anchor, tag: HTMLDivElement, options: {
     [key: string]: HTMLInputElement
 }) {
     const button = new MagicButton().element;
@@ -33,7 +33,7 @@ function createMultichoiceRadioAnchor(anchor: Anchor, tag: HTMLDivElement, optio
     return {onClick, button};
 }
 
-function createMultichoiceCheckboxAnchor(anchor: Anchor, tag: HTMLDivElement, options: {
+export function createMultichoiceCheckboxAnchor(anchor: Anchor, tag: HTMLDivElement, options: {
     [key: string]: HTMLInputElement
 }) {
     const button = new MagicButton().element;
