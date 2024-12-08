@@ -40,13 +40,13 @@ class Multichoice extends Question {
             this.answer.appendChild(button);
 
             const onClick = (data) => {
-                let choice = this.options[data.sign[0]]; //
+                let choice = this.options[data.anchor[0]]; //
                 console.log("options", this.options);
                 console.log("data", data);
                 // Try to find similar node in case 
                 // the text of the question has changed
                 if (!choice) {
-                    const candidate = Strings.findSimilar(data.sign[0], Object.keys(this.options));
+                    const candidate = Strings.findSimilar(data.anchor[0], Object.keys(this.options));
 
                     if (!candidate) {
                         return;
@@ -61,6 +61,7 @@ class Multichoice extends Question {
             return { onClick, button };
         }
         else if (this.type === "checkbox") {
+            const button = new MagicButton().element;
             let choice = this.options[anchor.anchor];
             // Try to find similar nodes in case 
             // the text of the question has changed
@@ -71,13 +72,13 @@ class Multichoice extends Question {
 
                 if (!candidate) {
                     console.log("Could not find such answer:", anchor.anchor);
-                    return;
+                    return {onClick: (data: any)=>{}, button };
                 }
 
                 choice = this.options[candidate];
             }
 
-            const button = new MagicButton().element;
+
             choice.parentNode.insertBefore(button, choice.nextSibling);
             const onClick = (data) => {
                 choice.checked = data.checked;//data.checked;
