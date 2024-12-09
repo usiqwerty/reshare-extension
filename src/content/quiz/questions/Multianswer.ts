@@ -100,6 +100,7 @@ class Multianswer extends Question {
     }
 
     createWidgetAnchor(anchor: Anchor) {
+        console.log("multianswer things happening here")
         let subq = null;
         if ((subq = this.select[anchor.index])) {
             return createSelectAnchor(subq);

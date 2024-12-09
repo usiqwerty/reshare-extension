@@ -4,6 +4,42 @@ import * as Strings from "../../../shared/utils/strings";
 import MagicButton from "../../../shared/widgets/MagicButton";
 import {Anchor, WidgetAnchor} from "../solver/types";
 
+export function createMatchAnchor(anchor: Anchor, labels: { [key: string]: HTMLSelectElement }, options: {
+    [key: string]: string
+}) {
+    const button = new MagicButton().element;
+    let select = labels[anchor.anchor];
+    // Try to find similar nodes in case
+    // the text of the question has changed
+    if (!select) {
+        const candidate = Strings.findSimilar(anchor.anchor, Object.keys(labels));
+
+        if (!candidate) {
+            return {onClick: (data: any) => {}, button};
+        }
+
+        select = labels[candidate];
+    }
+
+    select.parentNode.appendChild(button);
+
+    const onClick = (data: string) => {
+        let option = options[data];
+
+        // Try to find similar options in case
+        // the text of the question has changed
+        if (!option) {
+            const candidate = Strings.findSimilar(data, Object.keys(options));
+            if (!candidate)
+                return;
+            option = options[candidate];
+        }
+        select.value = option;
+    };
+
+    return {onClick, button};
+}
+
 class Match extends Question {
     labels: {};
     private readonly options: {};
@@ -40,37 +76,7 @@ class Match extends Question {
     }
 
     createWidgetAnchor(anchor: Anchor): WidgetAnchor {
-        const button = new MagicButton().element;
-        let select = this.labels[anchor.anchor];//.sign
-        // Try to find similar nodes in case 
-        // the text of the question has changed
-        if (!select) {
-            const candidate = Strings.findSimilar(anchor.anchor, Object.keys(this.labels));//.sign
-
-            if (!candidate) {
-                return {onClick: (data: any)=>{}, button};
-            }
-
-            select = this.labels[candidate];
-        }
-
-        select.parentNode.appendChild(button);
-
-        const onClick = (data: string) => {
-            let option = this.options[data];
-
-            // Try to find similar options in case 
-            // the text of the question has changed
-            if (!option) {
-                const candidate = Strings.findSimilar(data, Object.keys(this.options));//.sign
-                if (!candidate)
-                    return;
-                option = this.options[candidate];
-            }
-            select.value = option;
-        };
-
-        return {onClick, button};
+        return createMatchAnchor(anchor, this.labels, this.options);
     }
 }
 
